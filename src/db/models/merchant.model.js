@@ -25,14 +25,6 @@ const Merchant = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    contactNo: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
   },
   {
     timestamps: true,
