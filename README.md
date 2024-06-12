@@ -1,4 +1,4 @@
-# School Management System
+# Billing Project
 
 ### Server
 
@@ -7,13 +7,13 @@
 Clone the project
 
 ```cmd
-  git clone https://github.com/datstek/stadmos-server.git
+  git clone https://github.com/datstek/billing-server.git
 ```
 
 Go to the project directory
 
 ```cmd
-  cd stadmos-server
+  cd billing-server
 ```
 
 Install the dependencies
