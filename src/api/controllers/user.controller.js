@@ -1,76 +1,78 @@
 import { User } from "../../db/models/user.model.js";
 import bcrypt from "bcryptjs";
 
-//userSignup funtiom for creating new user
+//  for creating a new user
 export const userSignup = async (req, res) => {
   const { user_id, email, password, contactNo, role } = req.body;
 
   try {
-    let newUser;
-    //check for undefined values
+   
     if (!user_id || !email || !password || !contactNo || !role) {
-      res.status(400).json({
-        message: "Please add All the fields",
+      return res.status(409).json({
+        message: "Please add all the fields",
         success: false,
       });
     }
-    //check for find exsting user
+
+    //  for existing user
     const existingUser = await User.findOne({
-      where: {
-        user_id: user_id,
-      },
+      where: { user_id },
     });
+
     if (existingUser) {
-      res.status(200).json({
-        message: "User Already exist please login",
+      return res.status(409).json({
+        message: "User already exists, please login...",
         success: true,
       });
-    } else {
-      const hashedpassword = bcrypt.hashSync(password, 10);
-      newUser = await User.create({
-        user_id,
-        email,
-        password: hashedpassword,
-        contactNo,
-        role,
-      });
     }
 
-    if (!newUser) {
-      res.status(400).json({
-        message: "Failed to create user...",
-      });
-    }
+    // Create a new user 
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const newUser = await User.create({
+      user_id,
+      email,
+      password: hashedPassword,
+      contactNo,
+      role,
+    });
 
-    res.status(201).json({
-      message: "user created successfully...",
+    return res.status(201).json({
+      message: "User created successfully",
+      success: true,
       newUser,
     });
+
   } catch (error) {
-    console.log(error);
-    res.status(400).json({
+    console.error(error);
+    return res.status(500).json({
       message: "Error while creating a new user",
+      success: false,
     });
   }
 };
 
-//get all user
+// Get all users function
 export const getAllUser = async (req, res) => {
   try {
-    const getAllUsers = await User.findAll();
+    const allUsers = await User.findAll();
 
-    if (!getAllUser) {
-      res.status(404).json({
-        message: "No user found",
-        success: true,
+    if (!allUsers || allUsers.length === 0) {
+      return res.status(404).json({
+        message: "No users found",
+        success: false,
       });
     }
-    res
-      .status(200)
-      .json({ message: "List of User", success: true, getAllUsers });
+
+    return res.status(200).json({
+      message: "List of users",
+      success: true,
+      users: allUsers,
+    });
+
   } catch (error) {
-    res.status(400).json({
-      message: "Error occured while fetching allusers",
+    console.error(error);
+    return res.status(500).json({
+      message: "Error occurred while fetching users",
       success: false,
     });
   }

@@ -1,4 +1,4 @@
-const { sequelize } = require("../src/config");
+import { sequelize } from "../src/config";
 const { models } = require("../src/db/models/index");
 
 const args = process.argv;

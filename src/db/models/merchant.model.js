@@ -1,5 +1,5 @@
 import { Sequelize, DataTypes } from "sequelize";
-import { Merchant } from ".";
+
 
 const sequelize = new Sequelize("sqlite::memory:");
 
@@ -29,6 +29,23 @@ const Merchant = sequelize.define("merchant", {
   address: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  contactNo: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: "merchant",
   },
   createdAt: {
     type: DataTypes.DATE,
