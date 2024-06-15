@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { Consumer } from "../../db/models/consumer.model.js";
 import {v4 as uuid} from "uuid"
 
@@ -9,6 +10,30 @@ export const createNewConsumer = async (req, res) => {
   //from UUID we just create consumer_id
   let consumer_id =`C${user_id}${uid}`.split("-").join(""); 
   try {
+    
+    //check for empty value 
+    if(!user_id|| !email || !password || !contactNo){
+      return res.status(409).json({
+        message:"Please insert all the required fields",
+        success:false
+      })
+    }
+    //check for exsting consumer
+    const existingConsumer = await Consumer.findOne({
+      where:{
+        [Op.or]: [
+          { user_id: user_id },
+          { contactNo: contactNo },
+          { email: email },
+        ],
+      },
+    })
+    if(existingConsumer){
+      return res.status(400).json({
+        message:"You are already registered please login",
+        success:false
+      })
+    }
     const newConsumer = await Consumer.create({
       consumer_id,
       user_id,
