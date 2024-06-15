@@ -19,9 +19,11 @@ export const createNewMerchant = async (req, res) => {
   } = req.body;
   const buisnessLogoUrl = req.file;
 
-  //
-  //generating a random merchant_id
-  let merchant_id = uuid();
+  //generating uuid
+  let uid=uuid();
+
+  //from UUID we just create consumer_id
+  let merchant_id =`M${user_id}${uid}`.split("-").join(""); 
 
   try {
     if (
@@ -40,6 +42,7 @@ export const createNewMerchant = async (req, res) => {
         success: false,
       });
     }
+    
     const existingMerchant = await Merchant.findOne({
       where: {
         [Op.or]: [
@@ -55,9 +58,9 @@ export const createNewMerchant = async (req, res) => {
         console.log("photo deleted");
       });
       return res.status(400).json({
-        message: "Merchant account already present please login ",
+        message: " This merchant account already present please login ",
         success: false,
-        existingMerchant,
+  
       });
     }
 

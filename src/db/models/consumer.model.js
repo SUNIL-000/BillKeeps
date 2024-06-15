@@ -2,27 +2,41 @@ import { Sequelize, DataTypes } from "sequelize";
 
 const sequelize = new Sequelize("sqlite::memory:");
 
-const Consumer = sequelize.define("consumer", {
+ export const Consumer =  sequelize.define("consumer", {
+  consumer_id: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   user_id: {
     type: DataTypes.STRING,
     allowNull: false,
-    primaryKey: true,
   },
-
-  consumer_id: {
+  email: {
     type: DataTypes.STRING,
-    primaryKey: true,
     allowNull: false,
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+  contactNo: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
-  updatedAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue:"consumer"
+  },
+},{
+  timestamps:true
 });
 
-await sequelize.sync({ force: true });
-export { Consumer };
+(async () => {
+  try {
+    await sequelize.sync({ force: true });
+    console.log("Consumer tables created!");
+  } catch (error) {
+    console.error("Unable to create consumer tables", error);
+  }
+})();

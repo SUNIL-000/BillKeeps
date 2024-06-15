@@ -1,18 +1,19 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import morgan from "morgan"
 import { config } from "dotenv";
 import { dbConnect } from "./utils/dbutil.js";
-import { userRoute } from "./api/routes/user.route.js";
+// import { userRoute } from "./api/routes/user.route.js";
 import { merchantRoutes } from "./api/routes/merchant.route.js";
-import { Imageupload } from "./api/middleware/multer.js";
-
+import { consumerRouter } from "./api/routes/consumer.route.js";
 
 config({
   path: ".env",
 });
 
 const app = express();
+
 //connection to the database
 dbConnect();
 
@@ -24,6 +25,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(cors());
+app.use(morgan("dev"))
 app.use("/uploads",express.static("uploads"))
 
 // app.use(loggerMiddleware.logger);
@@ -34,8 +36,9 @@ app.get("/api/v1", (req, res) => res.send("API v1 base point"));
 
 // all user route 
 
-app.use("/api/v1/user", userRoute);
+// app.use("/api/v1/user", userRoute);
 app.use("/api/v1/merchant", merchantRoutes);
+app.use("/api/v1/consumer", consumerRouter);
 
 
 // connect to the server and database
