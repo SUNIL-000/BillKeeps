@@ -1,14 +1,20 @@
 import { Op } from "sequelize";
 import { Consumer } from "../../db/models/consumer.model.js";
 import {v4 as uuid} from "uuid"
+import bcrypt from "bcryptjs"
+
 
 export const createNewConsumer = async (req, res) => {
   const { user_id, email, password, contactNo } = req.body;
+  
+  const hashedPassword=  bcrypt.hashSync(password,10);
+  
   //generating uuid
   let uid=uuid();
+  
 
   //from UUID we just create consumer_id
-  let consumer_id =`C${user_id}${uid}`.split("-").join(""); 
+  let consumer_id =`C${user_id}${uid}`.split("-").join("").substring(0,10); 
   try {
     
     //check for empty value 
@@ -38,7 +44,7 @@ export const createNewConsumer = async (req, res) => {
       consumer_id,
       user_id,
       email,
-      password,
+      password:hashedPassword,
       contactNo,
     });
     await newConsumer.save();

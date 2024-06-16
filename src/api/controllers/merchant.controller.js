@@ -20,10 +20,10 @@ export const createNewMerchant = async (req, res) => {
   const buisnessLogoUrl = req.file;
 
   //generating uuid
-  let uid=uuid();
+  let uid = uuid();
 
-  //from UUID we just create consumer_id
-  let merchant_id =`M${user_id}${uid}`.split("-").join(""); 
+  //from UUID we just create merchant_id
+  let merchant_id = `M${user_id}${uid}`.split("-").join("").substring(0,10);
 
   try {
     if (
@@ -42,7 +42,7 @@ export const createNewMerchant = async (req, res) => {
         success: false,
       });
     }
-    
+
     const existingMerchant = await Merchant.findOne({
       where: {
         [Op.or]: [
@@ -60,7 +60,6 @@ export const createNewMerchant = async (req, res) => {
       return res.status(400).json({
         message: " This merchant account already present please login ",
         success: false,
-  
       });
     }
 
@@ -106,7 +105,9 @@ export const createNewMerchant = async (req, res) => {
 //getting all merchant account
 export const getAllMerchant = async (req, res) => {
   try {
-    const allMerchant = await Merchant.findAll({attributes:{exclude:['password']}});
+    const allMerchant = await Merchant.findAll({
+      attributes: { exclude: ["password"] },
+    });
 
     if (!allMerchant || allMerchant.length == 0) {
       return res.status(400).json({
