@@ -4,7 +4,8 @@ import { rm } from "fs";
 import { v4 as uuid } from "uuid";
 import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
-
+import jwt from "jsonwebtoken";
+let JWT_SECRETEKEY = "MY_SECRET_KEY";
 //creating a new merchant account
 export const createNewMerchant = async (req, res) => {
   const {
@@ -23,7 +24,7 @@ export const createNewMerchant = async (req, res) => {
   let uid = uuid();
 
   //from UUID we just create merchant_id
-  let merchant_id = `M${user_id}${uid}`.split("-").join("").substring(0,10);
+  let merchant_id = `M${user_id}${uid}`.split("-").join("").substring(0, 10);
 
   try {
     if (
@@ -127,6 +128,53 @@ export const getAllMerchant = async (req, res) => {
       message: "Error while getting all merchant account.",
       success: false,
       error,
+    });
+  }
+};
+
+//funtion for merchant login
+export const merchantLogin = async (req, res) => {
+  const { merchant_id, password } = req.body;
+
+  try {
+    // Check for empty value
+    if (!merchant_id || !password) {
+      return res.status(409).json({
+        message: "Please provide all the credentials",
+        success: false,
+      });
+    }
+
+    // Check for existing merchant
+    const merchant = await Merchant.findOne({ where: { merchant_id } });
+    if (!merchant) {
+      return res.status(404).json({
+        message: "Merchant not found",
+        success: false,
+      });
+    }
+
+    let isMatch = bcrypt.compareSync(password, merchant.password);
+    if (isMatch) {
+      const token = jwt.sign({ id: merchant.merchant_id }, JWT_SECRETEKEY, {
+        expiresIn: "2d",
+      });
+
+      return res.status(200).json({
+        message: "You are successfully logged in",
+        success: true,
+        token,
+      });
+    }
+
+    return res.status(400).json({
+      message: "Credential mismatch",
+      success: false,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Error while logging into merchant account",
     });
   }
 };

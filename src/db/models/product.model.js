@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes } from "sequelize";
 
-const sequelize = new Sequelize("sqlite::memory:");
+import { sequelize } from "../../config/db.js";
 
 const Product = sequelize.define("product", {
   product_id: {
@@ -31,5 +31,4 @@ const Product = sequelize.define("product", {
   },
 });
 
-await sequelize.sync({ force: true });
-export { Product, sequelize };
+await sequelize.sync();

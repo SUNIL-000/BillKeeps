@@ -2,16 +2,13 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import morgan from "morgan"
-import { config } from "dotenv";
-import { dbConnect } from "./utils/dbutil.js";
+import dotenv from "dotenv";
 // import { userRoute } from "./api/routes/user.route.js";
 import { merchantRoutes } from "./api/routes/merchant.route.js";
 import { consumerRouter } from "./api/routes/consumer.route.js";
+import { dbConnect } from "./utils/dbutil.js";
 
-config({
-  path: ".env",
-});
-
+dotenv.config();
 const app = express();
 
 //connection to the database

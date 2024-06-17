@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes } from "sequelize";
 
-const sequelize = new Sequelize("sqlite::memory:");
+import { sequelize } from "../../config/db.js";
 
  export const Consumer =  sequelize.define("consumer", {
   consumer_id: {
@@ -32,11 +32,7 @@ const sequelize = new Sequelize("sqlite::memory:");
   timestamps:true
 });
 
-(async () => {
-  try {
-    await sequelize.sync({ force: true });
+
+    await sequelize.sync();
     console.log("Consumer tables created!");
-  } catch (error) {
-    console.error("Unable to create consumer tables", error);
-  }
-})();
+  

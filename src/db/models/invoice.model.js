@@ -1,8 +1,9 @@
 import { Sequelize, DataTypes } from "sequelize";
 
-const sequelize = new Sequelize("sqlite::memory:");
+import { sequelize } from "../../config/db.js";
 
-const Invoice = sequelize.define("invoice", {
+
+export const Invoice = sequelize.define("invoice", {
   invoice_id: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -35,5 +36,5 @@ const Invoice = sequelize.define("invoice", {
   },
 });
 
-await sequelize.sync({ force: true });
-export { Invoice };
+await sequelize.sync();
+

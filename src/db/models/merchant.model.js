@@ -1,8 +1,8 @@
 import { Sequelize, DataTypes } from "sequelize";
+import { sequelize } from "../../config/db.js";
 
-const sequelize = new Sequelize("sqlite::memory:");
 
-export const Merchant = sequelize.define(
+export const Merchant =sequelize.define(
   "merchant",
   {
     merchant_id: {
@@ -51,11 +51,6 @@ export const Merchant = sequelize.define(
   },
   { timestamps: true }
 );
-(async () => {
-  try {
-    await sequelize.sync({ force: true });
-    console.log("merchannt table created!");
-  } catch (error) {
-    console.error("Unable to create merchant tables.", error);
-  }
-})();
+
+    await sequelize.sync();
+   

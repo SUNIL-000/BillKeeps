@@ -1,8 +1,9 @@
 import { Sequelize, DataTypes } from "sequelize";
 
-const sequelize = new Sequelize("sqlite::memory:");
+import { sequelize } from "../../config/db.js";
 
-const User = sequelize.define("user", {
+
+export const User = sequelize.define("user", {
   user_id: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -34,5 +35,5 @@ const User = sequelize.define("user", {
   },
 });
 
-await sequelize.sync({ force: true });
-export { User, sequelize };
+await sequelize.sync();
+
