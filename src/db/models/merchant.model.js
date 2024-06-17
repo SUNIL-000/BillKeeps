@@ -40,7 +40,7 @@ export const Merchant =sequelize.define(
       allowNull: false,
     },
     contactNo: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     role: {
