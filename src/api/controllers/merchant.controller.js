@@ -8,33 +8,17 @@ import jwt from "jsonwebtoken";
 let JWT_SECRETEKEY = "MY_SECRET_KEY";
 //creating a new merchant account
 export const createNewMerchant = async (req, res) => {
-  const {
-    user_id,
-    buisnessName,
-    gstNo,
-    address,
-    password,
-    email,
-    contactNo,
-    role,
-  } = req.body;
+  const { buisnessName, gstNo, contactNo, address, password } = req.body;
   const buisnessLogoUrl = req.file;
 
   //generating uuid
   let uid = uuid();
 
   //from UUID we just create merchant_id
-  let merchant_id = `M${user_id}${uid}`.split("-").join("").substring(0, 10);
+  let merchant_id = `M${uid}`.split("-").join("").substring(0, 10);
 
   try {
-    if (
-      !user_id ||
-      !buisnessName ||
-      !password ||
-      !email ||
-      !contactNo ||
-      !role
-    ) {
+    if (!buisnessName || !password || !contactNo) {
       rm(buisnessLogoUrl.path, () => {
         console.log("photo deleted");
       });
@@ -47,9 +31,9 @@ export const createNewMerchant = async (req, res) => {
     const existingMerchant = await Merchant.findOne({
       where: {
         [Op.or]: [
-          { buisnessName: buisnessName },
+        
           { contactNo: contactNo },
-          { email: email },
+        
         ],
       },
     });
@@ -69,15 +53,12 @@ export const createNewMerchant = async (req, res) => {
 
     const newMerchant = await Merchant.create({
       merchant_id,
-      user_id,
       buisnessName,
       buisnessLogoUrl: buisnessLogoUrl.path,
       gstNo,
       address,
       password: hashedPassword,
-      email,
       contactNo,
-      role,
     });
     await newMerchant.save();
 

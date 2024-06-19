@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 let JWT_SECRETEKEY = "MY_SECRET_KEY";
 
 export const createNewConsumer = async (req, res) => {
-  const { user_id, email, password, contactNo } = req.body;
+  const { password, contactNo } = req.body;
 
   const hashedPassword = bcrypt.hashSync(password, 10);
 
@@ -14,10 +14,10 @@ export const createNewConsumer = async (req, res) => {
   let uid = uuid();
 
   //from UUID we just create consumer_id
-  let consumer_id = `C${user_id}${uid}`.split("-").join("").substring(0, 10);
+  let consumer_id = `C${uid}`.split("-").join("").substring(0, 10);
   try {
     //check for empty value
-    if (!user_id || !email || !password || !contactNo) {
+    if (!password || !contactNo) {
       return res.status(409).json({
         message: "Please insert all the required fields",
         success: false,
@@ -26,11 +26,7 @@ export const createNewConsumer = async (req, res) => {
     //check for exsting consumer
     const existingConsumer = await Consumer.findOne({
       where: {
-        [Op.or]: [
-          { user_id: user_id },
-          { contactNo: contactNo },
-          { email: email },
-        ],
+        [Op.or]: [{ contactNo: contactNo }],
       },
     });
     if (existingConsumer) {
@@ -40,9 +36,7 @@ export const createNewConsumer = async (req, res) => {
       });
     }
     const newConsumer = await Consumer.create({
-      consumer_id,
-      user_id,
-      email,
+      consumer_id,    
       password: hashedPassword,
       contactNo,
     });

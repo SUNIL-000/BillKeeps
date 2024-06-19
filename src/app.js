@@ -3,11 +3,13 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import morgan from "morgan"
 import dotenv from "dotenv";
+import {v4 as uuid} from "uuid"
 // import { userRoute } from "./api/routes/user.route.js";
 import { merchantRoutes } from "./api/routes/merchant.route.js";
 import { consumerRouter } from "./api/routes/consumer.route.js";
 import { dbConnect } from "./utils/dbutil.js";
 import { productRoutes } from "./api/routes/product.route.js";
+import { sequelize } from "./config/db.js";
 
 dotenv.config();
 const app = express();

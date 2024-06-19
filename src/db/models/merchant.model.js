@@ -10,11 +10,7 @@ export const Merchant =sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
-    user_id: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      primaryKey: true,
-    },
+   
     buisnessName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -31,23 +27,16 @@ export const Merchant =sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     contactNo: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    role: {
+    password: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "merchant",
     },
+   
+   
   },
   { timestamps: true }
 );
