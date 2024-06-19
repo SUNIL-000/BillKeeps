@@ -69,7 +69,8 @@ export const getAllProduct = async (req, res) => {
 
 //funtion for deleting exsting product
 export const updateProduct = async (req, res) => {
-  const { product_id, name, price, desc } = req.body;
+  const { product_id} =req.params;
+  const { name, price, desc } = req.body;
   try {
     if (!product_id) {
       return res.status(409).json({
@@ -112,7 +113,7 @@ export const updateProduct = async (req, res) => {
 };
 //funtion for updating exsting product
 export const deleteProduct = async (req, res) => {
-  const { product_id } = req.body;
+  const { product_id } = req.params;
   try {
     if (!product_id) {
       return res.status(409).json({
