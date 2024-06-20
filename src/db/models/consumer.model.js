@@ -26,4 +26,4 @@ export const Consumer = sequelize.define(
 );
 
 await sequelize.sync();
-console.log("Consumer tables created!");
+console.log("Consumer table created");
