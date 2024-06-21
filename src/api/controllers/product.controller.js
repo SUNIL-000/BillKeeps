@@ -1,11 +1,13 @@
+import { Merchant } from "../../db/models/merchant.model.js";
 import { Product } from "../../db/models/product.model.js";
 import { v4 as uuid } from "uuid";
 
 //funtion for newproduct creation
 export const NewProduct = async (req, res) => {
-  const { name, desc, price } = req.body;
+  const { merchant_id, name, desc, price } = req.body;
+  console.log(req.body);
   try {
-    if (!name || !desc || !price) {
+    if (!name || !desc || !price || !merchant_id) {
       return res.status(409).json({
         messgae: "Please provide the product detail's",
         success: false,
@@ -15,13 +17,14 @@ export const NewProduct = async (req, res) => {
     const product_id = `P${id}`.split("-").join("").substring(0, 10);
     const newProduct = await Product.create({
       product_id,
+      merchant_id,
       name,
       desc,
       price,
     });
 
     if (!newProduct) {
-      return res.status(404).json({
+      return res.status(400).json({
         messgae: "Failed to create new product",
         success: false,
       });
@@ -69,7 +72,7 @@ export const getAllProduct = async (req, res) => {
 
 //funtion for deleting exsting product
 export const updateProduct = async (req, res) => {
-  const { product_id} =req.params;
+  const { product_id } = req.params;
   const { name, price, desc } = req.body;
   try {
     if (!product_id) {

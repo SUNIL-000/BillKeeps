@@ -1,5 +1,4 @@
-import { Sequelize, DataTypes } from "sequelize";
-
+import { DataTypes } from "sequelize";
 import { sequelize } from "../../config/db.js";
 
 export const Product = sequelize.define(
@@ -9,6 +8,14 @@ export const Product = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
+    },
+    merchant_id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "merchants",
+        key: "merchant_id",
+      },
     },
     name: {
       type: DataTypes.STRING,
@@ -28,4 +35,3 @@ export const Product = sequelize.define(
   }
 );
 
-await sequelize.sync();

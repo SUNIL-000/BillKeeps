@@ -2,7 +2,7 @@ import { Sequelize, DataTypes } from "sequelize";
 import { sequelize } from "../../config/db.js";
 
 
-export const Merchant =sequelize.define(
+export const Merchant = sequelize.define(
   "merchant",
   {
     merchant_id: {
@@ -10,7 +10,7 @@ export const Merchant =sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
-   
+
     buisnessName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -35,11 +35,6 @@ export const Merchant =sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-   
-   
   },
   { timestamps: true }
 );
-
-    await sequelize.sync();
-   
