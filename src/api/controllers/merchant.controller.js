@@ -30,11 +30,7 @@ export const createNewMerchant = async (req, res) => {
 
     const existingMerchant = await Merchant.findOne({
       where: {
-        [Op.or]: [
-        
-          { contactNo: contactNo },
-        
-        ],
+        [Op.or]: [{ contactNo: contactNo }],
       },
     });
 
@@ -42,8 +38,8 @@ export const createNewMerchant = async (req, res) => {
       rm(buisnessLogoUrl.path, () => {
         console.log("photo deleted");
       });
-      return res.status(400).json({
-        message: " This merchant account already present please login ",
+      return res.status(409).json({
+        message: "Account already exists with this contact number",
         success: false,
       });
     }
@@ -63,7 +59,7 @@ export const createNewMerchant = async (req, res) => {
     await newMerchant.save();
 
     if (!newMerchant) {
-      return res.status(400).json({
+      return res.status(409).json({
         message: "Failed to create new merchant account",
         success: false,
       });
@@ -76,8 +72,8 @@ export const createNewMerchant = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(201).json({
-      message: "Error while creating new merchan account.",
+    return res.status(500).json({
+      message: "Error while creating new merchant account.",
       success: false,
       error,
     });
@@ -115,11 +111,12 @@ export const getAllMerchant = async (req, res) => {
 
 //funtion for merchant login
 export const merchantLogin = async (req, res) => {
-  const { merchant_id, password } = req.body;
+  const { contactNo, password } = req.body;
+  console.log(req.body)
 
   try {
     // Check for empty value
-    if (!merchant_id || !password) {
+    if (!contactNo || !password) {
       return res.status(409).json({
         message: "Please provide all the credentials",
         success: false,
@@ -127,24 +124,29 @@ export const merchantLogin = async (req, res) => {
     }
 
     // Check for existing merchant
-    const merchant = await Merchant.findOne({ where: { merchant_id } });
+    const merchant = await Merchant.findOne({ where: { contactNo } } );
     if (!merchant) {
       return res.status(404).json({
-        message: "Merchant not found",
+        message: "Merchant not found please register",
         success: false,
       });
     }
 
     let isMatch = bcrypt.compareSync(password, merchant.password);
     if (isMatch) {
-      const token = jwt.sign({ id: merchant.merchant_id }, JWT_SECRETEKEY, {
-        expiresIn: "2d",
-      });
+      const token = jwt.sign(
+        { id: merchant.merchant_id, role: "merchant" },
+        JWT_SECRETEKEY,
+        {
+          expiresIn: "2d",
+        }
+      );
 
       return res.status(200).json({
         message: "You are successfully logged in",
         success: true,
         token,
+        merchant
       });
     }
 

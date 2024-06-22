@@ -6,7 +6,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    const id = uuid();
+    const id = uuid().split("-").join("").substring(0,5);
     const lastname = file.originalname.split(".").pop();
     const fileName = `${id}.${lastname}`;
     console.log(fileName)
