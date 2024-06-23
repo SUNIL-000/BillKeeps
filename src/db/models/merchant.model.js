@@ -1,6 +1,5 @@
-import { Sequelize, DataTypes } from "sequelize";
+import { Sequelize, DataTypes, UUIDV4 } from "sequelize";
 import { sequelize } from "../../config/db.js";
-
 
 export const Merchant = sequelize.define(
   "merchant",
@@ -30,6 +29,7 @@ export const Merchant = sequelize.define(
     contactNo: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique:true
     },
     password: {
       type: DataTypes.STRING,

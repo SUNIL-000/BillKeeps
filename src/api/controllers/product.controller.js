@@ -1,6 +1,5 @@
-import { Merchant } from "../../db/models/merchant.model.js";
-import { Product } from "../../db/models/product.model.js";
 import { v4 as uuid } from "uuid";
+import { Product, Merchant } from "../../db/models/index.js";
 
 //funtion for newproduct creation
 export const NewProduct = async (req, res) => {
@@ -14,7 +13,11 @@ export const NewProduct = async (req, res) => {
       });
     }
     const id = uuid();
-    const product_id = `P${id}`.split("-").join("").substring(0, 10);
+    const product_id = `P${id}`
+      .split("-")
+      .join("")
+      .substring(0, 10)
+      .toUpperCase();
     const newProduct = await Product.create({
       product_id,
       merchant_id,
@@ -47,7 +50,15 @@ export const NewProduct = async (req, res) => {
 //funtion for getting all product
 export const getAllProduct = async (req, res) => {
   try {
-    const allProduct = await Product.findAll();
+    const allProduct = await Product.findAll({
+      attributes: { exclude: ["createdAt", "updatedAt"] },
+      include: {
+        model: Merchant,
+        attributes: {
+          exclude: ["buisnessLogoUrl", "password", "createdAt", "updatedAt"],
+        },
+      },
+    });
 
     if (!allProduct || allProduct.length == 0) {
       return res.status(404).json({

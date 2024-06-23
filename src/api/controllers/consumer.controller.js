@@ -14,7 +14,11 @@ export const createNewConsumer = async (req, res) => {
   let uid = uuid();
 
   //from UUID we just create consumer_id
-  let consumer_id = `C${uid}`.split("-").join("").substring(0, 10);
+  let consumer_id = `C${uid}`
+    .split("-")
+    .join("")
+    .substring(0, 10)
+    .toUpperCase();
   try {
     //check for empty value
     if (!password || !contactNo) {
@@ -25,9 +29,7 @@ export const createNewConsumer = async (req, res) => {
     }
     //check for exsting consumer
     const existingConsumer = await Consumer.findOne({
-      where: {
-        [Op.or]: [{ contactNo: contactNo }],
-      },
+      where: { contactNo: contactNo },
     });
     if (existingConsumer) {
       return res.status(400).json({
@@ -36,7 +38,7 @@ export const createNewConsumer = async (req, res) => {
       });
     }
     const newConsumer = await Consumer.create({
-      consumer_id,    
+      consumer_id,
       password: hashedPassword,
       contactNo,
     });

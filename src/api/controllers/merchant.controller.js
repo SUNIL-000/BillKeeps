@@ -1,11 +1,12 @@
-import fs from "fs/promises";
-import { Merchant } from "../../db/models/merchant.model.js";
 import { rm } from "fs";
 import { v4 as uuid } from "uuid";
 import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
 let JWT_SECRETEKEY = "MY_SECRET_KEY";
+
+import { Product, Merchant } from "../../db/models/index.js";
+
 //creating a new merchant account
 export const createNewMerchant = async (req, res) => {
   const { buisnessName, gstNo, contactNo, address, password } = req.body;
@@ -15,7 +16,11 @@ export const createNewMerchant = async (req, res) => {
   let uid = uuid();
 
   //from UUID we just create merchant_id
-  let merchant_id = `M${uid}`.split("-").join("").substring(0, 10);
+  let merchant_id = `M${uid}`
+    .split("-")
+    .join("")
+    .substring(0, 10)
+    .toUpperCase();
 
   try {
     if (!buisnessName || !password || !contactNo) {
@@ -84,7 +89,7 @@ export const createNewMerchant = async (req, res) => {
 export const getAllMerchant = async (req, res) => {
   try {
     const allMerchant = await Merchant.findAll({
-      attributes: { exclude: ["password"] },
+      attributes: { exclude: ["password", "createdAt", "updatedAt"] },
     });
 
     if (!allMerchant || allMerchant.length == 0) {
@@ -112,7 +117,7 @@ export const getAllMerchant = async (req, res) => {
 //funtion for merchant login
 export const merchantLogin = async (req, res) => {
   const { contactNo, password } = req.body;
-  console.log(req.body)
+  console.log(req.body);
 
   try {
     // Check for empty value
@@ -124,7 +129,10 @@ export const merchantLogin = async (req, res) => {
     }
 
     // Check for existing merchant
-    const merchant = await Merchant.findOne({ where: { contactNo } } );
+    const merchant = await Merchant.findOne({
+      where: { contactNo },
+      attributes: { exclude: ["createdAt", "updatedAt"] },
+    });
     if (!merchant) {
       return res.status(404).json({
         message: "Merchant not found please register",
@@ -146,7 +154,7 @@ export const merchantLogin = async (req, res) => {
         message: "You are successfully logged in",
         success: true,
         token,
-        merchant
+        merchant,
       });
     }
 
@@ -158,6 +166,38 @@ export const merchantLogin = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       message: "Error while logging into merchant account",
+    });
+  }
+};
+
+export const getAllMerchantWithProduct = async (req, res) => {
+  try {
+    const merchantsProduct = await Merchant.findAll({
+      include: {
+        model: Product,
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      },
+      attributes: { exclude: ["password", "createdAt", "updatedAt"] },
+    });
+
+    if (!merchantsProduct || merchantsProduct.length == 0) {
+      return res.status(400).json({
+        message: "No merchant account has been found... ",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Getting all merchant account with their product...",
+      success: true,
+      merchantsProduct,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(201).json({
+      message: "Error while getting all product created by the merchant.",
+      success: false,
+      error,
     });
   }
 };
