@@ -2,7 +2,6 @@ import { Sequelize, DataTypes } from "sequelize";
 
 import { sequelize } from "../../config/db.js";
 
-
 export const Invoice = sequelize.define("invoice", {
   invoice_id: {
     type: DataTypes.STRING,
@@ -18,23 +17,13 @@ export const Invoice = sequelize.define("invoice", {
     allowNull: false,
   },
   invoice_date: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
   },
   total_amount: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+     
   },
 
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
-});
-
-await sequelize.sync();
-
+ 
+},{timestamps:true});
