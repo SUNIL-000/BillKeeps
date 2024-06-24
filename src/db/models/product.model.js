@@ -25,7 +25,7 @@ export const Product = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    price: {
+    mrp: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

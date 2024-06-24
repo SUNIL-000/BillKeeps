@@ -27,7 +27,7 @@ export const Merchant = sequelize.define(
       allowNull: true,
     },
     contactNo: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       unique:true
     },

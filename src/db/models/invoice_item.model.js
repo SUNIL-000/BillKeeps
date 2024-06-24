@@ -30,7 +30,8 @@ export const InvoiceItem = sequelize.define(
       type: DataTypes.INTEGER,
     },
     salePrice: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DOUBLE,
+      
     },
   },
   {

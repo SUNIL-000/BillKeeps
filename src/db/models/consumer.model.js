@@ -12,7 +12,7 @@ export const Consumer = sequelize.define(
     },
 
     contactNo: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     password: {
@@ -25,5 +25,4 @@ export const Consumer = sequelize.define(
   }
 );
 
-await sequelize.sync();
-console.log("Consumer table created");
+

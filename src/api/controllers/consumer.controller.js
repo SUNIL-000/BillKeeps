@@ -1,24 +1,19 @@
-import { Op } from "sequelize";
-import { Consumer } from "../../db/models/consumer.model.js";
-import { v4 as uuid } from "uuid";
+
+import { Consumer } from "../../db/models/index.js";
+
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { generateID } from "../../utils/generateID.js";
 let JWT_SECRETEKEY = "MY_SECRET_KEY";
 
 export const createNewConsumer = async (req, res) => {
   const { password, contactNo } = req.body;
-
   const hashedPassword = bcrypt.hashSync(password, 10);
 
-  //generating uuid
-  let uid = uuid();
+
 
   //from UUID we just create consumer_id
-  let consumer_id = `C${uid}`
-    .split("-")
-    .join("")
-    .substring(0, 10)
-    .toUpperCase();
+  let consumer_id = generateID("C")
   try {
     //check for empty value
     if (!password || !contactNo) {
@@ -76,6 +71,7 @@ export const consumerLogin = async (req, res) => {
     //check for exsting consumer
     const consumer = await Consumer.findOne({
       where: { consumer_id: consumer_id },
+      
     });
 
     if (!consumer) {
@@ -112,7 +108,11 @@ export const consumerLogin = async (req, res) => {
 //get All consumer
 export const getAllConsumer = async (req, res) => {
   try {
-    const allConsumer = await Consumer.findAll();
+    const allConsumer = await Consumer.findAll({
+      attributes:{
+        exclude:['createdAt','updatedAt','password']
+      }
+    });
 
     if (!allConsumer || allConsumer.length == 0) {
       return res.status(400).json({

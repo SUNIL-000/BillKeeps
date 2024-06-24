@@ -1,29 +1,25 @@
-import { v4 as uuid } from "uuid";
 import { Product, Merchant } from "../../db/models/index.js";
+import { generateID } from "../../utils/generateID.js";
 
 //funtion for newproduct creation
 export const NewProduct = async (req, res) => {
-  const { merchant_id, name, desc, price } = req.body;
+  const { merchant_id, name, desc, mrp } = req.body;
   console.log(req.body);
   try {
-    if (!name || !desc || !price || !merchant_id) {
+    if (!name || !desc || !mrp || !merchant_id) {
       return res.status(409).json({
         messgae: "Please provide the product detail's",
         success: false,
       });
     }
-    const id = uuid();
-    const product_id = `P${id}`
-      .split("-")
-      .join("")
-      .substring(0, 10)
-      .toUpperCase();
+  
+    const product_id = generateID("P")
     const newProduct = await Product.create({
       product_id,
       merchant_id,
       name,
       desc,
-      price,
+      mrp,
     });
 
     if (!newProduct) {
@@ -84,7 +80,7 @@ export const getAllProduct = async (req, res) => {
 //funtion for deleting exsting product
 export const updateProduct = async (req, res) => {
   const { product_id } = req.params;
-  const { name, price, desc } = req.body;
+  const { name, mrp, desc } = req.body;
   try {
     if (!product_id) {
       return res.status(409).json({
@@ -104,8 +100,8 @@ export const updateProduct = async (req, res) => {
     if (name) {
       existProduct.name = name;
     }
-    if (price) {
-      existProduct.price = price;
+    if (mrp) {
+      existProduct.mrp = mrp;
     }
     if (desc) {
       existProduct.desc = desc;

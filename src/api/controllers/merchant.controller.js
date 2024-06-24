@@ -1,26 +1,19 @@
 import { rm } from "fs";
-import { v4 as uuid } from "uuid";
 import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
 let JWT_SECRETEKEY = "MY_SECRET_KEY";
 
 import { Product, Merchant } from "../../db/models/index.js";
+import { generateID } from "../../utils/generateID.js";
 
 //creating a new merchant account
 export const createNewMerchant = async (req, res) => {
   const { buisnessName, gstNo, contactNo, address, password } = req.body;
   const buisnessLogoUrl = req.file;
 
-  //generating uuid
-  let uid = uuid();
-
   //from UUID we just create merchant_id
-  let merchant_id = `M${uid}`
-    .split("-")
-    .join("")
-    .substring(0, 10)
-    .toUpperCase();
+  let merchant_id = generateID("M");
 
   try {
     if (!buisnessName || !password || !contactNo) {
@@ -196,6 +189,35 @@ export const getAllMerchantWithProduct = async (req, res) => {
     console.log(error);
     return res.status(201).json({
       message: "Error while getting all product created by the merchant.",
+      success: false,
+      error,
+    });
+  }
+};
+
+export const getAllMerchantID = async (req, res) => {
+  try {
+    const merchantIDs = await Merchant.findAll({
+      
+      attributes: ["merchant_id"] ,
+    });
+
+    if (!merchantIDs || merchantIDs.length == 0) {
+      return res.status(400).json({
+        message: "No merchant account has been found... ",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Getting all merchant ID",
+      success: true,
+      merchantIDs,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(201).json({
+      message: "Error while getting all merchant ID.",
       success: false,
       error,
     });
