@@ -31,6 +31,10 @@ export const Merchant = sequelize.define(
       allowNull: false,
       unique:true
     },
+    businessType :{
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: true,

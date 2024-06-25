@@ -1,7 +1,7 @@
-// const { db } = require("./env");
-import  { Sequelize } from "sequelize";
+import { Sequelize } from "sequelize";
+import { config } from "./env.js";
 
-export const sequelize = new Sequelize(`postgres://postgres:1234@localhost:5432/billing-client`, {
+export const sequelize = new Sequelize(config.db.connectionURI, {
   dialect: "postgres",
   logging: false,
 });

@@ -4,10 +4,10 @@ import jwt from "jsonwebtoken";
 
 import { Product, Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
-
+``
 //creating a new merchant account
 export const createNewMerchant = async (req, res) => {
-  const { buisnessName, gstNo, contactNo, address, password } = req.body;
+  const { buisnessName, gstNo, contactNo, address, password ,businessType} = req.body;
   const buisnessLogoUrl = req.file;
 
   //from UUID we just create merchant_id
@@ -47,6 +47,7 @@ export const createNewMerchant = async (req, res) => {
       buisnessLogoUrl: `${buisnessLogoUrl ? buisnessLogoUrl.path : ""}`,
       gstNo,
       address,
+      businessType,
       password: hashedPassword,
       contactNo,
     });
@@ -69,7 +70,7 @@ export const createNewMerchant = async (req, res) => {
     return res.status(500).json({
       message: "Error while creating new merchant account.",
       success: false,
-      error,
+      error:error
     });
   }
 };
