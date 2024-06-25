@@ -8,75 +8,78 @@ import {
 } from "../../db/models/index.js";
 
 export const newInvoice = async (req, res) => {
-  const { merchant_id, consumer_id, total_amount, items } = req.body;
-
-  //-----------------ignore it----------
-  // items:[{
-  //   productid,
-  //   quanity,
-  //   discountamount,
-  //   discountpercent
-  // }]
-  // //------------------------------------
-  // invoice_item_id
-  // invoice_id
-  // product_id
-  // quantity
-  // discountAmout
-  // discountPercent
-  // salePrice
+  const { merchant_id, consumer_id, items } = req.body;
 
   try {
-    const invoice_id = generateID("I"); //create a new invoiceid
-    const newInvoice = await Invoice.create({
+    let total_amount = 0;
+    const invoice_id = generateID("I");
+    const newInvoices = await Invoice.create({
       invoice_id,
       merchant_id,
       consumer_id,
       total_amount,
     });
 
-    var allInvoiceItemes = [];
-
-    items.map(async (data) => {
+    for (const data of items) {
+      console.log(data);
       const pdata = await Product.findByPk(data?.product_id);
 
-      var beforeDiscount = pdata.mrp * data?.quantity;
-      var finalDiscountPrice;
-
-      if (data?.discountAmout) {
-        finalDiscountPrice = beforeDiscount - data?.discountAmout;
+      if (!pdata) {
+        return res
+          .status(404)
+          .json({ message: "Product not found..", success: false });
       }
+
+      let beforeDiscount = pdata?.mrp * data?.quantity;
+      console.log("before discount", beforeDiscount);
+
+      let finalDiscountPrice = beforeDiscount;
+
+      if (data?.discountAmount) {
+        finalDiscountPrice = beforeDiscount - data?.discountAmount;
+      }
+
       if (data?.discountPercent) {
-        let disount =
-          (pdata.mrp * data?.quantity * data?.discountPercent) / 100;
-         finalDiscountPrice = beforeDiscount - disount;
+        const discount = beforeDiscount * (data?.discountPercent / 100);
+        finalDiscountPrice = beforeDiscount - discount;
       }
 
-      var newInvoiceItemes = await InvoiceItem.create({
+      console.log("final price", finalDiscountPrice);
+
+      total_amount += finalDiscountPrice;
+
+      const newInvoiceItem = await InvoiceItem.create({
         invoice_item_id: generateID("IT"),
         invoice_id,
         product_id: pdata?.product_id,
         quantity: data?.quantity,
-        discountAmout: data?.discountAmout,
+        discountAmount: data?.discountAmount,
         discountPercent: data?.discountPercent,
         salePrice: finalDiscountPrice,
       });
+      console.log(newInvoiceItem);
+      if (!newInvoiceItem) {
+        return res.status(400).json({
+          message: "Failed to create Invoice and invoice item..",
+          success: false,
+        });
+      }
+    }
+    console.log("total_amount", total_amount);
+    newInvoices.total_amount = total_amount;
+    await newInvoices.save();
 
-      console.log(newInvoiceItemes);
-    });
-
-    if (!newInvoice) {
+    if (!newInvoices) {
       return res.status(400).json({
         message: "Failed to create Invoice and invoice item..",
         success: false,
-        
       });
     }
+
     return res.status(201).json({
       message: "New Invoice and Invoice items are created successfully..",
       success: true,
       newInvoice,
-      
     });
   } catch (error) {
     console.log(error);
@@ -101,6 +104,12 @@ export const getAllInvoice = async (req, res) => {
         {
           model: Consumer,
           attributes: { exclude: ["createdAt", "updatedAt", "password"] },
+        },
+        {
+          model: InvoiceItem,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
         },
       ],
     });

@@ -9,6 +9,8 @@ import { consumerRouter } from "./api/routes/consumer.route.js";
 import { dbConnect } from "./utils/dbutil.js";
 import { productRoutes } from "./api/routes/product.route.js";
 import { invoice } from "./api/routes/invoice.route.js";
+import { isMerchant } from "./api/middleware/merchantMiddleware.js";
+import { invoiceItem } from "./api/routes/invoice_item.route.js";
 
 dotenv.config({
   path: ".env",
@@ -41,8 +43,10 @@ app.use("/api/v1/merchant", merchantRoutes);
 app.use("/api/v1/consumer", consumerRouter);
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/invoice", invoice);
+app.use("/api/v1/invoice-item", invoiceItem);
+
 
 // connect to the server and database
-app.listen(process.env.PORT, async () => {
+app.listen(process.env.PORT || 5000, async () => {
   console.log(`Server running on http://localhost:${process.env.PORT}`);
 });

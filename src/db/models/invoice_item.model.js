@@ -8,11 +8,11 @@ export const InvoiceItem = sequelize.define(
     invoice_item_id: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey: true,
     },
     invoice_id: {
       type: DataTypes.STRING,
       allowNull: false,
-      primaryKey: true,
     },
     product_id: {
       type: DataTypes.STRING,
@@ -21,23 +21,19 @@ export const InvoiceItem = sequelize.define(
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue:1
+      defaultValue: 1,
     },
     discountAmout: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DOUBLE,
     },
     discountPercent: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DOUBLE,
     },
     salePrice: {
       type: DataTypes.DOUBLE,
-      
     },
   },
   {
     timestamps: true,
   }
 );
-
-
-

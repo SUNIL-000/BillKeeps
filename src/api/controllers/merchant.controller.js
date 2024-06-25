@@ -1,8 +1,6 @@
 import { rm } from "fs";
 import bcrypt from "bcryptjs";
-import { Op } from "sequelize";
 import jwt from "jsonwebtoken";
-let JWT_SECRETEKEY = "MY_SECRET_KEY";
 
 import { Product, Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
@@ -20,24 +18,22 @@ export const createNewMerchant = async (req, res) => {
       rm(buisnessLogoUrl.path, () => {
         console.log("photo deleted");
       });
-      return res.status(409).json({
+      return res.status(400).json({
         message: "please provide the required fields",
         success: false,
       });
     }
 
     const existingMerchant = await Merchant.findOne({
-      where: {
-        [Op.or]: [{ contactNo: contactNo }],
-      },
+      where: { contactNo: contactNo },
     });
 
     if (existingMerchant) {
       rm(buisnessLogoUrl.path, () => {
-        console.log("photo deleted");
+        console.log("Photo deleted");
       });
-      return res.status(409).json({
-        message: "Account already exists with this contact number",
+      return res.status(400).json({
+        message: "Merchant account already exists with this contact number",
         success: false,
       });
     }
@@ -48,7 +44,7 @@ export const createNewMerchant = async (req, res) => {
     const newMerchant = await Merchant.create({
       merchant_id,
       buisnessName,
-      buisnessLogoUrl: buisnessLogoUrl.path,
+      buisnessLogoUrl: `${buisnessLogoUrl ? buisnessLogoUrl.path : ""}`,
       gstNo,
       address,
       password: hashedPassword,
@@ -110,7 +106,6 @@ export const getAllMerchant = async (req, res) => {
 //funtion for merchant login
 export const merchantLogin = async (req, res) => {
   const { contactNo, password } = req.body;
-  console.log(req.body);
 
   try {
     // Check for empty value
@@ -134,26 +129,24 @@ export const merchantLogin = async (req, res) => {
     }
 
     let isMatch = bcrypt.compareSync(password, merchant.password);
-    if (isMatch) {
-      const token = jwt.sign(
-        { id: merchant.merchant_id, role: "merchant" },
-        JWT_SECRETEKEY,
-        {
-          expiresIn: "2d",
-        }
-      );
-
-      return res.status(200).json({
-        message: "You are successfully logged in",
-        success: true,
-        token,
-        merchant,
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Credential mismatch",
+        success: false,
       });
     }
-
-    return res.status(400).json({
-      message: "Credential mismatch",
-      success: false,
+    const token = jwt.sign(
+      { id: merchant.merchant_id, role: "merchant" },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "2d",
+      }
+    );
+    return res.status(200).json({
+      message: "You are successfully logged in",
+      success: true,
+      token,
+      merchant,
     });
   } catch (error) {
     console.log(error);
@@ -198,8 +191,7 @@ export const getAllMerchantWithProduct = async (req, res) => {
 export const getAllMerchantID = async (req, res) => {
   try {
     const merchantIDs = await Merchant.findAll({
-      
-      attributes: ["merchant_id"] ,
+      attributes: ["merchant_id"],
     });
 
     if (!merchantIDs || merchantIDs.length == 0) {

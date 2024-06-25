@@ -23,7 +23,7 @@ export const Invoice = sequelize.define(
       defaultValue: DataTypes.NOW,
     },
     total_amount: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DOUBLE,
     },
   },
   { timestamps: true }

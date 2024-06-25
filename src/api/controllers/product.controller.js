@@ -4,7 +4,7 @@ import { generateID } from "../../utils/generateID.js";
 //funtion for newproduct creation
 export const NewProduct = async (req, res) => {
   const { merchant_id, name, desc, mrp } = req.body;
-  console.log(req.body);
+
   try {
     if (!name || !desc || !mrp || !merchant_id) {
       return res.status(409).json({

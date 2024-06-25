@@ -12,10 +12,7 @@ export const Product = sequelize.define(
     merchant_id: {
       type: DataTypes.STRING,
       allowNull: false,
-      references: {
-        model: "merchants",
-        key: "merchant_id",
-      },
+     
     },
     name: {
       type: DataTypes.STRING,
@@ -26,7 +23,7 @@ export const Product = sequelize.define(
       allowNull: true,
     },
     mrp: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DOUBLE,
       allowNull: false,
     },
   },

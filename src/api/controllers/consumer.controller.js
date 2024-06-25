@@ -1,4 +1,3 @@
-
 import { Consumer } from "../../db/models/index.js";
 
 import bcrypt from "bcryptjs";
@@ -10,10 +9,8 @@ export const createNewConsumer = async (req, res) => {
   const { password, contactNo } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
 
-
-
   //from UUID we just create consumer_id
-  let consumer_id = generateID("C")
+  let consumer_id = generateID("C");
   try {
     //check for empty value
     if (!password || !contactNo) {
@@ -58,20 +55,22 @@ export const createNewConsumer = async (req, res) => {
 
 //funtion for consumer login
 export const consumerLogin = async (req, res) => {
-  const { consumer_id, password } = req.body;
+  const { contactNo, password } = req.body;
 
   try {
     //check for empty value
-    if (!consumer_id || !password) {
-      return res.status(409).json({
+    if (!contactNo || !password) {
+      return res.status(400).json({
         message: "Please provide all the credential",
         success: false,
       });
     }
     //check for exsting consumer
     const consumer = await Consumer.findOne({
-      where: { consumer_id: consumer_id },
-      
+      where: { contactNo: contactNo },
+      attributes: {
+        exclude:['createdAt','updatedAt' ]
+      },
     });
 
     if (!consumer) {
@@ -81,21 +80,26 @@ export const consumerLogin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: consumer.consumer_id }, JWT_SECRETEKEY, {
-      expiresIn: "2d",
-    });
+    const token = jwt.sign(
+      { id: consumer.consumer_id, role: "user" },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "2d",
+      }
+    );
     let isMatch = bcrypt.compareSync(password, consumer?.password);
-    if (isMatch) {
-      return res.status(200).json({
-        message: "You are successfully loggedin..",
-        success: true,
-        token,
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Credential mismatch..",
+        success: false,
       });
     }
 
-    return res.status(400).json({
-      message: "Credential mismatch..",
-      success: false,
+    return res.status(200).json({
+      message: "You are successfully loggedin..",
+      success: true,
+      token,
+      consumer,
     });
   } catch (error) {
     console.log(error);
@@ -109,9 +113,9 @@ export const consumerLogin = async (req, res) => {
 export const getAllConsumer = async (req, res) => {
   try {
     const allConsumer = await Consumer.findAll({
-      attributes:{
-        exclude:['createdAt','updatedAt','password']
-      }
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "password"],
+      },
     });
 
     if (!allConsumer || allConsumer.length == 0) {
