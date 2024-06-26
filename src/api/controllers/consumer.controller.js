@@ -11,6 +11,13 @@ export const createNewConsumer = async (req, res) => {
   //from UUID we just create consumer_id
   let consumer_id = generateID("C");
   try {
+    
+    if (contactNo.length > 10 || contactNo.length < 10) {
+      return res.status(400).json({
+        message: "Contact no should be of 10 digit ",
+        success: false,
+      });
+    }
     //check for empty value
     if (!password || !contactNo) {
       return res.status(409).json({
@@ -18,6 +25,7 @@ export const createNewConsumer = async (req, res) => {
         success: false,
       });
     }
+
     //check for exsting consumer
     const existingConsumer = await Consumer.findOne({
       where: { contactNo: contactNo },
@@ -42,12 +50,12 @@ export const createNewConsumer = async (req, res) => {
     }
     return res.status(201).json({
       message: "New consumer created successfully..",
-      newConsumer,
+      success: true,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: " Error whilecreating new consumer..",
+      message: " Error while creating new consumer..",
     });
   }
 };
@@ -68,13 +76,13 @@ export const consumerLogin = async (req, res) => {
     const consumer = await Consumer.findOne({
       where: { contactNo: contactNo },
       attributes: {
-        exclude:['createdAt','updatedAt' ]
+        exclude: ["createdAt", "updatedAt"],
       },
     });
 
     if (!consumer) {
-      return res.status(200).json({
-        message: "Consumer not found",
+      return res.status(404).json({
+        message: "Consumer not found .Register first",
         success: false,
       });
     }
@@ -98,7 +106,7 @@ export const consumerLogin = async (req, res) => {
       message: "You are successfully loggedin..",
       success: true,
       token,
-      consumer,
+      consumerID: consumer.consumer_id,
     });
   } catch (error) {
     console.log(error);

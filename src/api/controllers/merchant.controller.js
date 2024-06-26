@@ -4,22 +4,31 @@ import jwt from "jsonwebtoken";
 
 import { Product, Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
-``
+``;
 //creating a new merchant account
 export const createNewMerchant = async (req, res) => {
-  const { buisnessName, gstNo, contactNo, address, password ,businessType} = req.body;
+  const { buisnessName, gstNo, contactNo, address, password, businessType } =
+    req.body;
   const buisnessLogoUrl = req.file;
 
   //from UUID we just create merchant_id
   let merchant_id = generateID("M");
 
   try {
-    if (!buisnessName || !password || !contactNo) {
-      rm(buisnessLogoUrl.path, () => {
-        console.log("photo deleted");
-      });
+    if(contactNo.length >10 ||contactNo.length <10){
       return res.status(400).json({
-        message: "please provide the required fields",
+        message: "Contact no should be of 10 digit ",
+        success: false,
+      });
+    }
+    if (!buisnessName || !password || !contactNo) {
+      if (buisnessLogoUrl) {
+        rm(buisnessLogoUrl.path, () => {
+          console.log("Photo deleted");
+        });
+      }
+      return res.status(400).json({
+        message: "Please provide the required fields",
         success: false,
       });
     }
@@ -29,9 +38,11 @@ export const createNewMerchant = async (req, res) => {
     });
 
     if (existingMerchant) {
-      rm(buisnessLogoUrl.path, () => {
-        console.log("Photo deleted");
-      });
+      if (buisnessLogoUrl) {
+        rm(buisnessLogoUrl.path, () => {
+          console.log("Photo deleted");
+        });
+      }
       return res.status(400).json({
         message: "Merchant account already exists with this contact number",
         success: false,
@@ -61,16 +72,16 @@ export const createNewMerchant = async (req, res) => {
     }
 
     return res.status(201).json({
-      message: "New merchant account created successfully...",
+      message: "Merchant account created successfully...",
       success: true,
-      newMerchant,
+      
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       message: "Error while creating new merchant account.",
       success: false,
-      error:error
+      error: error,
     });
   }
 };
@@ -110,9 +121,9 @@ export const merchantLogin = async (req, res) => {
 
   try {
     // Check for empty value
-    if (!contactNo || !password) {
-      return res.status(409).json({
-        message: "Please provide all the credentials",
+    if (!contactNo || !password ||contactNo.length >10 ||contactNo.length <10 ) {
+      return res.status(400).json({
+        message: "Please provide  the correct credentials",
         success: false,
       });
     }
@@ -147,7 +158,7 @@ export const merchantLogin = async (req, res) => {
       message: "You are successfully logged in",
       success: true,
       token,
-      merchant,
+      merchantID:merchant.merchant_id,
     });
   } catch (error) {
     console.log(error);

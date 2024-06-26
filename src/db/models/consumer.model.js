@@ -12,7 +12,7 @@ export const Consumer = sequelize.define(
     },
 
     contactNo: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: false,
     },
     password: {
