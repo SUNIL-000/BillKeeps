@@ -152,3 +152,37 @@ export const deletSingleInvoice = async (req, res) => {
     });
   }
 };
+
+//GET ALL invoice with respect to consumer id
+export const getInvoiceOfConsumer = async (req, res) => {
+  const { consumer_id } = req.params;
+
+  try {
+    const allInvoices = await Invoice.findAll({
+      where: { consumer_id },
+      attributes: { exclude: ["createdAt", "updatedAt"] },
+      include: {
+        model: InvoiceItem,
+        attributes: { exclude: ["createdAt", "updatedAt"] },
+      },
+    });
+
+    if (!allInvoices) {
+      return res.status(404).json({
+        message: `No Invoice found with consumer id ${consumer_id}`,
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      message: `Getting Invoices having consumer id ${consumer_id}`,
+      success: true,
+      allInvoices,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Error while getting single invoice record of a consumer",
+      success: false,
+    });
+  }
+};

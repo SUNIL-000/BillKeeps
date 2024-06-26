@@ -3,7 +3,6 @@ import { Consumer } from "../../db/models/index.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { generateID } from "../../utils/generateID.js";
-let JWT_SECRETEKEY = "MY_SECRET_KEY";
 
 export const createNewConsumer = async (req, res) => {
   const { password, contactNo } = req.body;
