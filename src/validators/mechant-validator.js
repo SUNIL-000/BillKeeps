@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const merchantSignup = z.object({
+export const merchantSignupValidation = z.object({
   buisnessName: z
     .string({ required_error: "buisnessName required" })
     .min(1, { message: "buisnessName must be at least 1 character" })
@@ -22,7 +22,7 @@ export const merchantSignup = z.object({
   buisnessLogoUrl: z.string().optional(),
 });
 
-export const merchantSignIn = z.object({
+export const merchantSignInValidation = z.object({
   contactNo: z
     .string({ required_error: "contactNo required" })
     .length(10, { message: "contactNo must be exactly 10 digits" }),

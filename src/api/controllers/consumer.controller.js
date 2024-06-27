@@ -10,20 +10,6 @@ export const createNewConsumer = async (req, res) => {
   //from UUID we just create merchantId
   let consumerId = generateID("C");
   try {
-    if (contactNo.length > 10 || contactNo.length < 10) {
-      return res.status(400).json({
-        message: "Contact no should be of 10 digit ",
-        success: false,
-      });
-    }
-    //check for empty value
-    if (!password || !contactNo) {
-      return res.status(409).json({
-        message: "Please insert all the required fields",
-        success: false,
-      });
-    }
-
     //check for exsting consumer
     const existingConsumer = await Consumer.findOne({
       where: { contactNo: contactNo },
@@ -63,13 +49,6 @@ export const consumerLogin = async (req, res) => {
   const { contactNo, password } = req.body;
 
   try {
-    //check for empty value
-    if (!contactNo || !password) {
-      return res.status(400).json({
-        message: "Please provide all the credential",
-        success: false,
-      });
-    }
     //check for exsting consumer
     const consumer = await Consumer.findOne({
       where: { contactNo: contactNo },
