@@ -4,7 +4,7 @@ import { sequelize } from "../../config/db.js";
 export const Merchant = sequelize.define(
   "merchant",
   {
-    merchant_id: {
+    merchantId: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,

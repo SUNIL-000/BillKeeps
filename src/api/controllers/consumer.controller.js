@@ -1,17 +1,15 @@
-import { Consumer } from "../../db/models/index.js";
-
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { Consumer } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
 
 export const createNewConsumer = async (req, res) => {
   const { password, contactNo } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
 
-  //from UUID we just create consumer_id
-  let consumer_id = generateID("C");
+  //from UUID we just create merchantId
+  let consumerId = generateID("C");
   try {
-    
     if (contactNo.length > 10 || contactNo.length < 10) {
       return res.status(400).json({
         message: "Contact no should be of 10 digit ",
@@ -37,7 +35,7 @@ export const createNewConsumer = async (req, res) => {
       });
     }
     const newConsumer = await Consumer.create({
-      consumer_id,
+      consumerId,
       password: hashedPassword,
       contactNo,
     });
@@ -88,7 +86,7 @@ export const consumerLogin = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: consumer.consumer_id, role: "user" },
+      { id: consumer.consumerId, role: "user" },
       process.env.JWT_SECRET_KEY,
       {
         expiresIn: "2d",
@@ -106,12 +104,11 @@ export const consumerLogin = async (req, res) => {
       message: "You are successfully loggedin..",
       success: true,
       token,
-      consumerID: consumer.consumer_id,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: " Error while log into consumer account",
+      message: " Error while logged into consumer account",
     });
   }
 };

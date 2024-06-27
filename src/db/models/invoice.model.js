@@ -5,24 +5,24 @@ import { sequelize } from "../../config/db.js";
 export const Invoice = sequelize.define(
   "invoice",
   {
-    invoice_id: {
+    invoiceId: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },
-    merchant_id: {
+    merchantId: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    consumer_id: {
+    consumerId: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    invoice_date: {
+    invoiceDate: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
-    total_amount: {
+    totalAmount: {
       type: DataTypes.DOUBLE,
     },
   },

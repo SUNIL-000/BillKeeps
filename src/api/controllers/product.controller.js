@@ -3,10 +3,10 @@ import { generateID } from "../../utils/generateID.js";
 
 //funtion for newproduct creation
 export const NewProduct = async (req, res) => {
-  const { merchant_id, name, desc, mrp } = req.body;
+  const { merchantId, name, desc, mrp } = req.body;
 
   try {
-    if (!name || !desc || !mrp || !merchant_id) {
+    if (!name || !desc || !mrp || !merchantId) {
       return res.status(409).json({
         messgae: "Please provide the product detail's",
         success: false,
@@ -15,8 +15,8 @@ export const NewProduct = async (req, res) => {
   
     const product_id = generateID("P")
     const newProduct = await Product.create({
-      product_id,
-      merchant_id,
+      productId,
+      merchantId,
       name,
       desc,
       mrp,
@@ -79,17 +79,17 @@ export const getAllProduct = async (req, res) => {
 
 //funtion for deleting exsting product
 export const updateProduct = async (req, res) => {
-  const { product_id } = req.params;
+  const { productId } = req.params;
   const { name, mrp, desc } = req.body;
   try {
-    if (!product_id) {
-      return res.status(409).json({
+    if (!productId) {
+      return res.status(400).json({
         message: "Please provide product id",
         success: false,
       });
     }
 
-    const existProduct = await Product.findByPk(product_id);
+    const existProduct = await Product.findByPk(productId);
 
     if (!existProduct || existProduct.length == 0) {
       return res.status(404).json({
@@ -116,23 +116,23 @@ export const updateProduct = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      messgae: "error while updatinf=g the product",
+      messgae: "error while updating the product",
       success: false,
     });
   }
 };
 //funtion for updating exsting product
 export const deleteProduct = async (req, res) => {
-  const { product_id } = req.params;
+  const { productId } = req.params;
   try {
-    if (!product_id) {
+    if (!productId) {
       return res.status(409).json({
         message: "Please provide product id",
         success: false,
       });
     }
 
-    const existProduct = await Product.findByPk(product_id);
+    const existProduct = await Product.findByPk(productId);
 
     if (!existProduct || existProduct.length == 0) {
       return res.status(404).json({

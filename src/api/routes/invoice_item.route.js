@@ -6,8 +6,8 @@ export const invoiceItem=express.Router();
 
 
 invoiceItem.get("/all",getAllInvoiceItem)
-invoiceItem.get("/all/:invoice_id",getAllInvoiceItemWithInvoiceId)
-invoiceItem.get("/product/:product_id",getAllInvoiceItemWithItsProducts)
+invoiceItem.get("/all/:invoiceId",getAllInvoiceItemWithInvoiceId)
+invoiceItem.get("/product/:productId",getAllInvoiceItemWithItsProducts)
 
 invoiceItem.delete("/:id",deleleInvoiceItem)
 

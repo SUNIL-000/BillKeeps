@@ -6,24 +6,24 @@ import { Product } from "./product.model.js";
 import { InvoiceItem } from "./invoice_item.model.js";
 
 //one to many relation between merchant and product
-Merchant.hasMany(Product, { foreignKey: "merchant_id" });
-Product.belongsTo(Merchant, { foreignKey: "merchant_id" });
+Merchant.hasMany(Product, { foreignKey: "merchantId" });
+Product.belongsTo(Merchant, { foreignKey: "merchantId" });
 
 //one to many relation between invoice and invoice item
-Invoice.hasMany(InvoiceItem, { foreignKey: "invoice_id" });
-InvoiceItem.belongsTo(Invoice, { foreignKey: "invoice_id" });
+Invoice.hasMany(InvoiceItem, { foreignKey: "invoiceId" });
+InvoiceItem.belongsTo(Invoice, { foreignKey: "invoiceId" });
 
 //one to many relation between product and invoice-item
-Product.hasMany(InvoiceItem, { foreignKey: "product_id" });
-InvoiceItem.belongsTo(Product, { foreignKey: "product_id" });
+Product.hasMany(InvoiceItem, { foreignKey: "productId" });
+InvoiceItem.belongsTo(Product, { foreignKey: "productId" });
 
 //one to many relation between merchant and invoice
-Merchant.hasMany(Invoice, { foreignKey: "merchant_id" });
-Invoice.belongsTo(Merchant, { foreignKey: "merchant_id" });
+Merchant.hasMany(Invoice, { foreignKey: "merchantId" });
+Invoice.belongsTo(Merchant, { foreignKey: "merchantId" });
 
 //one to many relation between merchant and invoice
-Consumer.hasMany(Invoice, { foreignKey: "consumer_id" });
-Invoice.belongsTo(Consumer, { foreignKey: "consumer_id" });
+Consumer.hasMany(Invoice, { foreignKey: "consumerId" });
+Invoice.belongsTo(Consumer, { foreignKey: "consumerId" });
 
 await sequelize.sync({ alter: true });
 console.log("Tables are created successfully")

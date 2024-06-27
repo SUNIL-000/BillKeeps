@@ -6,8 +6,8 @@ export const invoice=express.Router();
 
 invoice.post("/create",newInvoice)
 invoice.get("/all",getAllInvoice)
-invoice.delete("/:invoice_id",deletSingleInvoice)
-invoice.get("/:consumer_id",getInvoiceOfConsumer)
+invoice.delete("/:invoiceId",deletSingleInvoice)
+invoice.get("/:consumerId",getInvoiceOfConsumer)
 
 
 

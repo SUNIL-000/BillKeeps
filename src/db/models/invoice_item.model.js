@@ -5,16 +5,16 @@ import { sequelize } from "../../config/db.js";
 export const InvoiceItem = sequelize.define(
   "invoiceItem",
   {
-    invoice_item_id: {
+    invoiceItemId: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },
-    invoice_id: {
+    invoiceId: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    product_id: {
+    consumerId: {
       type: DataTypes.STRING,
       allowNull: false,
     },

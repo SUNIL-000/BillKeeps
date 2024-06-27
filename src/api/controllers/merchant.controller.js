@@ -11,28 +11,10 @@ export const createNewMerchant = async (req, res) => {
     req.body;
   const buisnessLogoUrl = req.file;
 
-  //from UUID we just create merchant_id
-  let merchant_id = generateID("M");
+  //from UUID we just create merchantId
+  let merchantId = generateID("M");
 
   try {
-    if(contactNo.length >10 ||contactNo.length <10){
-      return res.status(400).json({
-        message: "Contact no should be of 10 digit ",
-        success: false,
-      });
-    }
-    if (!buisnessName || !password || !contactNo) {
-      if (buisnessLogoUrl) {
-        rm(buisnessLogoUrl.path, () => {
-          console.log("Photo deleted");
-        });
-      }
-      return res.status(400).json({
-        message: "Please provide the required fields",
-        success: false,
-      });
-    }
-
     const existingMerchant = await Merchant.findOne({
       where: { contactNo: contactNo },
     });
@@ -53,9 +35,9 @@ export const createNewMerchant = async (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     const newMerchant = await Merchant.create({
-      merchant_id,
+      merchantId,
       buisnessName,
-      buisnessLogoUrl: `${buisnessLogoUrl ? buisnessLogoUrl.path : ""}`,
+      buisnessLogoUrl: `${buisnessLogoUrl ? buisnessLogoUrl?.path : ""}`,
       gstNo,
       address,
       businessType,
@@ -74,7 +56,6 @@ export const createNewMerchant = async (req, res) => {
     return res.status(201).json({
       message: "Merchant account created successfully...",
       success: true,
-      
     });
   } catch (error) {
     console.log(error);
@@ -120,14 +101,6 @@ export const merchantLogin = async (req, res) => {
   const { contactNo, password } = req.body;
 
   try {
-    // Check for empty value
-    if (!contactNo || !password ||contactNo.length >10 ||contactNo.length <10 ) {
-      return res.status(400).json({
-        message: "Please provide  the correct credentials",
-        success: false,
-      });
-    }
-
     // Check for existing merchant
     const merchant = await Merchant.findOne({
       where: { contactNo },
@@ -148,7 +121,7 @@ export const merchantLogin = async (req, res) => {
       });
     }
     const token = jwt.sign(
-      { id: merchant.merchant_id, role: "merchant" },
+      { id: merchant.merchantId, role: "merchant" },
       process.env.JWT_SECRET_KEY,
       {
         expiresIn: "2d",
@@ -158,7 +131,6 @@ export const merchantLogin = async (req, res) => {
       message: "You are successfully logged in",
       success: true,
       token,
-      merchantID:merchant.merchant_id,
     });
   } catch (error) {
     console.log(error);
@@ -203,7 +175,7 @@ export const getAllMerchantWithProduct = async (req, res) => {
 export const getAllMerchantID = async (req, res) => {
   try {
     const merchantIDs = await Merchant.findAll({
-      attributes: ["merchant_id"],
+      attributes: ["merchantId"],
     });
 
     if (!merchantIDs || merchantIDs.length == 0) {

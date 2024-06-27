@@ -8,21 +8,21 @@ import {
 } from "../../db/models/index.js";
 
 export const newInvoice = async (req, res) => {
-  const { merchant_id, consumer_id, items } = req.body;
+  const { merchantId, consumerId, items } = req.body;
 
   try {
-    let total_amount = 0;
-    const invoice_id = generateID("I");
+    let totalAmount = 0;
+    const invoiceId = generateID("I");
     const newInvoices = await Invoice.create({
-      invoice_id,
-      merchant_id,
-      consumer_id,
-      total_amount,
+      invoiceId,
+      merchantId,
+      consumerId,
+      totalAmount,
     });
 
     for (const data of items) {
       console.log(data);
-      const pdata = await Product.findByPk(data?.product_id);
+      const pdata = await Product.findByPk(data?.productId);
 
       if (!pdata) {
         return res
@@ -46,12 +46,12 @@ export const newInvoice = async (req, res) => {
 
       console.log("final price", finalDiscountPrice);
 
-      total_amount += finalDiscountPrice;
+      totalAmount += finalDiscountPrice;
 
       const newInvoiceItem = await InvoiceItem.create({
-        invoice_item_id: generateID("IT"),
-        invoice_id,
-        product_id: pdata?.product_id,
+        invoiceItemId: generateID("IT"),
+        invoiceId,
+        productId: pdata?.productId,
         quantity: data?.quantity,
         discountAmount: data?.discountAmount,
         discountPercent: data?.discountPercent,
@@ -65,8 +65,8 @@ export const newInvoice = async (req, res) => {
         });
       }
     }
-    console.log("total_amount", total_amount);
-    newInvoices.total_amount = total_amount;
+    console.log("total_amount", totalAmount);
+    newInvoices.totalAmount = totalAmount;
     await newInvoices.save();
 
     if (!newInvoices) {
@@ -130,9 +130,9 @@ export const getAllInvoice = async (req, res) => {
 };
 
 export const deletSingleInvoice = async (req, res) => {
-  const { invoice_id } = req.params;
+  const { invoiceId } = req.params;
   try {
-    const deletedInvoice = await Invoice.destroy({ where: { invoice_id } });
+    const deletedInvoice = await Invoice.destroy({ where: { invoiceId } });
 
     if (!deletedInvoice) {
       return res.status(404).json({
@@ -155,11 +155,11 @@ export const deletSingleInvoice = async (req, res) => {
 
 //GET ALL invoice with respect to consumer id
 export const getInvoiceOfConsumer = async (req, res) => {
-  const { consumer_id } = req.params;
+  const { consumerId } = req.params;
 
   try {
     const allInvoices = await Invoice.findAll({
-      where: { consumer_id },
+      where: { consumerId },
       attributes: { exclude: ["createdAt", "updatedAt"] },
       include: {
         model: InvoiceItem,
@@ -169,12 +169,12 @@ export const getInvoiceOfConsumer = async (req, res) => {
 
     if (!allInvoices) {
       return res.status(404).json({
-        message: `No Invoice found with consumer id ${consumer_id}`,
+        message: `No Invoice found with consumer id ${consumerId}`,
         success: false,
       });
     }
     return res.status(200).json({
-      message: `Getting Invoices having consumer id ${consumer_id}`,
+      message: `Getting Invoices having consumer id ${consumerId}`,
       success: true,
       allInvoices,
     });

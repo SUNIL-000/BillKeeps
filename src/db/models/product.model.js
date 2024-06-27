@@ -4,12 +4,12 @@ import { sequelize } from "../../config/db.js";
 export const Product = sequelize.define(
   "product",
   {
-    product_id: {
+    productId: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },
-    merchant_id: {
+    merchantId: {
       type: DataTypes.STRING,
       allowNull: false,
      

@@ -5,7 +5,7 @@ import { sequelize } from "../../config/db.js";
 export const Consumer = sequelize.define(
   "consumer",
   {
-    consumer_id: {
+    consumerId: {
       type: DataTypes.STRING,
       allowNull: false,
       primaryKey:true

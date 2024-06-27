@@ -33,7 +33,7 @@ export const deleleInvoiceItem = async (req, res) => {
   const { id } = req.params;
   try {
     const DeleteItem = await InvoiceItem.destroy({
-      where: { invoice_item_id: id },
+      where: { invoiceItemId: id },
     });
 
     if (!DeleteItem) {
@@ -56,10 +56,10 @@ export const deleleInvoiceItem = async (req, res) => {
 };
 //get all invoiceitem with respect to invoice id
 export const getAllInvoiceItemWithInvoiceId = async (req, res) => {
-  const { invoice_id } = req.params;
+  const { invoiceId } = req.params;
   try {
     const allInvoiceItem = await InvoiceItem.findAll({
-      where: { invoice_id },
+      where: { invoiceId },
       attributes: { exclude: ["createdAt", "updatedAt"] },
       include: {
         model: Invoice,
@@ -69,19 +69,19 @@ export const getAllInvoiceItemWithInvoiceId = async (req, res) => {
 
     if (!allInvoiceItem) {
       return res.status(404).json({
-        message: `No invoice items has been found with invoice id ${invoice_id}`,
+        message: `No invoice items has been found with invoice id ${invoiceId}`,
         success: false,
       });
     }
     return res.status(200).json({
-      message: `Getting all invoice item record having invoice_id ${invoice_id}`,
+      message: `Getting all invoice item record having invoiceId ${invoiceId}`,
       success: true,
       allInvoiceItem,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: `Error while getting all invoice item record having invoice_id ${invoice_id}`,
+      message: `Error while getting all invoice item record having invoiceId ${invoiceId}`,
       success: false,
     });
   }
@@ -90,10 +90,10 @@ export const getAllInvoiceItemWithInvoiceId = async (req, res) => {
 
 //getting invoice items with its product details
 export const getAllInvoiceItemWithItsProducts = async (req, res) => {
-  const { product_id } = req.params;
+  const { invoiceId } = req.params;
   try {
     const allInvoiceItem = await InvoiceItem.findAll({
-      where: { product_id },
+      where: { invoiceId },
       attributes: { exclude: ["createdAt", "updatedAt"] },
       include: {
         model: Product,
@@ -103,19 +103,19 @@ export const getAllInvoiceItemWithItsProducts = async (req, res) => {
 
     if (!allInvoiceItem) {
       return res.status(404).json({
-        message: `No invoice items has been found with product id ${product_id}`,
+        message: `No invoice items has been found with product id ${invoiceId}`,
         success: false,
       });
     }
     return res.status(200).json({
-      message: `Getting all invoice item record having product_id ${product_id}`,
+      message: `Getting all invoice item record having invoiceId ${invoiceId}`,
       success: true,
       allInvoiceItem,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: `Error while getting all invoice item record having product id ${product_id}`,
+      message: `Error while getting all invoice item record having product id ${invoiceId}`,
       success: false,
     });
   }
