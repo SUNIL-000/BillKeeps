@@ -7,8 +7,8 @@ export const merchantSignup = z.object({
     .max(200, { message: "buisnessName must be at most 200 characters" }),
   contactNo: z
     .string({ required_error: "contactNo required" })
-    .min(10, { message: "contactNo must be exactly 10 digits" })
-    .max(10, { message: "contactNo must be exactly 10 digits" }),
+    .length(10, { message: "contactNo must be exactly 10 digits" }),
+
   password: z.string({ required_error: "password required" }),
   gstNo: z.string().optional(),
   address: z
@@ -25,7 +25,8 @@ export const merchantSignup = z.object({
 export const merchantSignIn = z.object({
   contactNo: z
     .string({ required_error: "contactNo required" })
-    .min(10, { message: "contactNo must be exactly 10 digits" })
-    .max(10, { message: "contactNo must be exactly 10 digits" }),
-  password: z.string({ required_error: "password required" }),
+    .length(10, { message: "contactNo must be exactly 10 digits" }),
+  password: z
+    .string({ required_error: "password required" })
+    .min(1, { message: "Please enter your password" }),
 });
