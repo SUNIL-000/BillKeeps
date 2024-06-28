@@ -26,6 +26,13 @@ export const createNewConsumer = async (req, res) => {
       contactNo,
     });
     await newConsumer.save();
+    const token = jwt.sign(
+      { id: newConsumer?.consumerId, role: "consumer" },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "2d",
+      }
+    );
 
     if (!newConsumer) {
       return res.status(400).json({
@@ -35,6 +42,7 @@ export const createNewConsumer = async (req, res) => {
     return res.status(201).json({
       message: "New consumer created successfully..",
       success: true,
+      token,
     });
   } catch (error) {
     console.log(error);

@@ -39,8 +39,6 @@ app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/invoice", invoice);
 app.use("/api/v1/invoice-item", invoiceItem);
 
-
-
 // connect to the server and database
 app.listen(process.env.PORT , async () => {
   console.log(`Server running on http://localhost:${process.env.PORT}`);

@@ -10,11 +10,11 @@ export const Merchant = sequelize.define(
       primaryKey: true,
     },
 
-    buisnessName: {
+    businessName: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    buisnessLogoUrl: {
+    businessLogoUrl: {
       type: DataTypes.STRING,
       allowNull: true,
     },

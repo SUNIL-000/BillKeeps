@@ -12,7 +12,6 @@ export const Product = sequelize.define(
     merchantId: {
       type: DataTypes.STRING,
       allowNull: false,
-     
     },
     name: {
       type: DataTypes.STRING,
@@ -31,4 +30,3 @@ export const Product = sequelize.define(
     timestamps: true,
   }
 );
-

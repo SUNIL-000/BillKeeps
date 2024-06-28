@@ -7,9 +7,9 @@ import { generateID } from "../../utils/generateID.js";
 ``;
 //creating a new merchant account
 export const createNewMerchant = async (req, res) => {
-  const { buisnessName, gstNo, contactNo, address, password, businessType } =
+  const { businessName, gstNo, contactNo, address, password, businessType } =
     req.body;
-  const buisnessLogoUrl = req.file;
+  const businessLogoUrl = req.file;
 
   //from UUID we just create merchantId
   let merchantId = generateID("M");
@@ -20,8 +20,8 @@ export const createNewMerchant = async (req, res) => {
     });
 
     if (existingMerchant) {
-      if (buisnessLogoUrl) {
-        rm(buisnessLogoUrl.path, () => {
+      if (businessLogoUrl) {
+        rm(businessLogoUrl.path, () => {
           console.log("Photo deleted");
         });
       }
@@ -36,8 +36,8 @@ export const createNewMerchant = async (req, res) => {
 
     const newMerchant = await Merchant.create({
       merchantId,
-      buisnessName,
-      buisnessLogoUrl: `${buisnessLogoUrl ? buisnessLogoUrl?.path : ""}`,
+      businessName,
+      businessLogoUrl: `${businessLogoUrl ? businessLogoUrl?.path : ""}`,
       gstNo,
       address,
       businessType,
@@ -45,6 +45,13 @@ export const createNewMerchant = async (req, res) => {
       contactNo,
     });
     await newMerchant.save();
+    const token = jwt.sign(
+      { id: newMerchant.merchantId, role: "merchant" },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "2d",
+      }
+    );
 
     if (!newMerchant) {
       return res.status(409).json({
@@ -56,9 +63,11 @@ export const createNewMerchant = async (req, res) => {
     return res.status(201).json({
       message: "Merchant account created successfully...",
       success: true,
+      token,
     });
   } catch (error) {
     console.log(error);
+   
     return res.status(500).json({
       message: "Error while creating new merchant account.",
       success: false,
@@ -140,19 +149,36 @@ export const merchantLogin = async (req, res) => {
   }
 };
 
-export const getAllMerchantWithProduct = async (req, res) => {
+export const getAllProductWithSingleMerchant = async (req, res) => {
+
+  const { merchantId } = req.params;
+
   try {
-    const merchantsProduct = await Merchant.findAll({
+    if (!merchantId) {
+      return res.status(400).json({
+        message: "merchantId required",
+        success: false,
+      });
+    }
+    const merchantsProduct = await Merchant.findOne({
+      where: { merchantId },
       include: {
         model: Product,
         attributes: { exclude: ["createdAt", "updatedAt"] },
       },
-      attributes: { exclude: ["password", "createdAt", "updatedAt"] },
+      attributes: ['merchantId'],
     });
 
-    if (!merchantsProduct || merchantsProduct.length == 0) {
+    if (!merchantsProduct) {
       return res.status(400).json({
         message: "No merchant account has been found... ",
+        success: false,
+      });
+    }
+    
+    if (merchantsProduct.products.length == 0) {
+      return res.status(400).json({
+        message: `No product has been associated with merchantId ${merchantId} `,
         success: false,
       });
     }
@@ -160,11 +186,11 @@ export const getAllMerchantWithProduct = async (req, res) => {
     return res.status(200).json({
       message: "Getting all merchant account with their product...",
       success: true,
-      merchantsProduct,
+      merchantsProduct
     });
   } catch (error) {
     console.log(error);
-    return res.status(201).json({
+    return res.status(400).json({
       message: "Error while getting all product created by the merchant.",
       success: false,
       error,

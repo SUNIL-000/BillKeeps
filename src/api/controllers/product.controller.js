@@ -3,17 +3,20 @@ import { generateID } from "../../utils/generateID.js";
 
 //funtion for newproduct creation
 export const NewProduct = async (req, res) => {
-  const { merchantId, name, desc, mrp } = req.body;
+  const {  name, desc, mrp } = req.body;
+  const  merchantId = req.id;
 
   try {
-    if (!name || !desc || !mrp || !merchantId) {
-      return res.status(409).json({
-        messgae: "Please provide the product detail's",
+    
+    const isMerchant = await Merchant.findOne({where:{merchantId}})
+
+    if(!isMerchant){
+      return res.status(400).json({
+        messgae: "Invalid Merchant ID",
         success: false,
       });
     }
-  
-    const product_id = generateID("P")
+    const productId = generateID("P");
     const newProduct = await Product.create({
       productId,
       merchantId,
@@ -80,6 +83,9 @@ export const getAllProduct = async (req, res) => {
 //funtion for deleting exsting product
 export const updateProduct = async (req, res) => {
   const { productId } = req.params;
+  const merchantId = req.id
+
+
   const { name, mrp, desc } = req.body;
   try {
     if (!productId) {
@@ -90,10 +96,17 @@ export const updateProduct = async (req, res) => {
     }
 
     const existProduct = await Product.findByPk(productId);
+    
 
     if (!existProduct || existProduct.length == 0) {
       return res.status(404).json({
-        messgae: "No product found.",
+        messgae: `No product found with productId ${productId}`,
+        success: false,
+      });
+    }
+    if(merchantId !=existProduct.merchantId){
+      return res.status(400).json({
+        messgae: `You are not the owner of this product`,
         success: false,
       });
     }
