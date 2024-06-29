@@ -149,54 +149,7 @@ export const merchantLogin = async (req, res) => {
   }
 };
 
-export const getAllProductWithSingleMerchant = async (req, res) => {
 
-  const { merchantId } = req.params;
-
-  try {
-    if (!merchantId) {
-      return res.status(400).json({
-        message: "merchantId required",
-        success: false,
-      });
-    }
-    const merchantsProduct = await Merchant.findOne({
-      where: { merchantId },
-      include: {
-        model: Product,
-        attributes: { exclude: ["createdAt", "updatedAt"] },
-      },
-      attributes: ['merchantId'],
-    });
-
-    if (!merchantsProduct) {
-      return res.status(400).json({
-        message: "No merchant account has been found... ",
-        success: false,
-      });
-    }
-    
-    if (merchantsProduct.products.length == 0) {
-      return res.status(400).json({
-        message: `No product has been associated with merchantId ${merchantId} `,
-        success: false,
-      });
-    }
-
-    return res.status(200).json({
-      message: "Getting all merchant account with their product...",
-      success: true,
-      merchantsProduct
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      message: "Error while getting all product created by the merchant.",
-      success: false,
-      error,
-    });
-  }
-};
 
 export const getAllMerchantID = async (req, res) => {
   try {

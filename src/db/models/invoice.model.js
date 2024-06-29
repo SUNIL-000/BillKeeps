@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
 
 import { sequelize } from "../../config/db.js";
 
@@ -25,6 +25,12 @@ export const Invoice = sequelize.define(
     totalAmount: {
       type: DataTypes.DOUBLE,
     },
+    returnValidity: {
+      type: DataTypes.INTEGER,
+    },
+    exchangeValidity: {
+      type: DataTypes.INTEGER
+    }
   },
   { timestamps: true }
 );

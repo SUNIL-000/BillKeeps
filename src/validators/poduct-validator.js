@@ -17,10 +17,10 @@ export const updateProductValidation = z.object({
   body: z.object({
     name: z
       .string({ required_error: "Product name must required" })
-      .min(5, { message: "Product name must be atleast 5 charecter" }).optional(),
+      .optional(),
     desc: z
       .string({ required_error: "Description must be required" })
-      .min(1, { message: "Description must be atleast of 1 charecter" }).optional(),
+      .optional(),
     mrp: z.number({ required_error: "Mrp must be required" }).optional(),
   }),
   params: z.object({
@@ -30,3 +30,27 @@ export const updateProductValidation = z.object({
 
   })
 });
+
+
+
+export const deleteProductValidation = z.object({
+
+  params: z.object({
+    productId: z
+      .string({ required_error: "productId must required" })
+      .length(10, { message: "productId must be of 10 digit" }),
+
+  })
+});
+export const singleProductValidation = z.object({
+
+  params: z.object({
+    productId: z
+      .string({ required_error: "productId must required" })
+      .length(10, { message: "productId must be of 10 digit" }),
+
+  })
+});
+
+
+

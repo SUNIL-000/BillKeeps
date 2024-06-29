@@ -8,7 +8,8 @@ import {
 } from "../../db/models/index.js";
 
 export const newInvoice = async (req, res) => {
-  const { merchantId, consumerId, items } = req.body;
+  const { merchantId, consumerId, items, returnValidity,
+    exchangeValidity } = req.body;
 
   try {
     let totalAmount = 0;
@@ -18,6 +19,8 @@ export const newInvoice = async (req, res) => {
       merchantId,
       consumerId,
       totalAmount,
+      returnValidity,
+      exchangeValidity
     });
 
     for (const data of items) {
