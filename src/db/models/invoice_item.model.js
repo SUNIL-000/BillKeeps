@@ -14,7 +14,7 @@ export const InvoiceItem = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    consumerId: {
+    productId: {
       type: DataTypes.STRING,
       allowNull: false,
     },
