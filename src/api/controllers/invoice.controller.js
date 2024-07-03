@@ -147,7 +147,6 @@ export const deletSingleInvoice = async (req, res) => {
 //GET ALL invoice with respect to consumer id
 export const getInvoiceOfConsumer = async (req, res) => {
   const  consumerId  = req.id;
-
   try {
     const allInvoices = await Invoice.findAll({
       where: { consumerId },
@@ -195,3 +194,55 @@ export const getInvoiceOfConsumer = async (req, res) => {
     });
   }
 };
+
+
+//get single invoice 
+export const getSingleInvoice = async (req,res)=>{
+  const  {invoiceId}  = req.params;
+  try {
+    const singleInvoice = await Invoice.findOne({
+      where: { invoiceId },
+      attributes: { exclude: ["createdAt", "updatedAt", "merchantId", "consumerId"] },
+      include: [
+        {
+          model: InvoiceItem,
+          attributes: { exclude: ["createdAt", "updatedAt", "invoiceId", "productId"] },
+          include: [
+            {
+              model: Product,
+              attributes: { exclude: ["createdAt", "updatedAt", "merchantId"] },
+            },
+          ],
+        },
+        {
+          model: Consumer,
+          attributes: { exclude: ["createdAt", "updatedAt", "password"] },
+        },
+        {
+          model: Merchant,
+          attributes: { exclude: ["createdAt", "updatedAt", "password"] },
+        },
+      ],
+     
+    });
+
+    if (!singleInvoice || singleInvoice.length === 0) {
+      return res.status(404).json({
+        message: `No invoices found with invoice id ${invoiceId}`,
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: `Getting invoice having invoice id ${invoiceId}`,
+      success: true,
+      singleInvoice,
+    });
+  } catch (error) {
+    console.error( error);
+    return res.status(500).json({
+      message: "Error while single invoice",
+      success: false,
+    });
+  }
+}

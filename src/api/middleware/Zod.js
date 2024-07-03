@@ -14,7 +14,7 @@ export const bodyValidator = (schema) => async (req, res, next) => {
     next();
   } catch (err) {
     const msg = err?.errors[0]?.message;
-    // console.log(err)
+    console.log(err)
     return res.status(400).json({
       message: msg,
       success: false,

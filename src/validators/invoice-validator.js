@@ -35,3 +35,14 @@ export const invoiceValidation = z.object({
     })
 
 });
+
+
+export const singleInvoiceValidation = z.object({
+    params: z.object({
+        invoiceId: z.string({ required_error: "invoiceId required" })
+            .length(10, { message: "invoiceId must be of 10 letters" }),
+
+        
+    })
+
+});
