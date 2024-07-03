@@ -2,7 +2,7 @@ import express from "express";
 import { NewProduct, deleteProduct, getAllProduct, getAllProductOfSingleMerchant, getSingleProduct, updateProduct } from "../controllers/product.controller.js";
 import { isMerchant } from "../middleware/merchantMiddleware.js";
 import { bodyValidator } from "../middleware/Zod.js";
-import { createProductValidation, deleteProductValidation, singleProductValidation, updateProductValidation } from "../../validators/poduct-validator.js";
+import { createProductValidation, deleteProductValidation, singleProductValidation, updateProductValidation } from "../../validators/product-validator.js";
 
 export const productRoutes=express.Router();
 

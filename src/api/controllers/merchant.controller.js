@@ -105,6 +105,36 @@ export const getAllMerchant = async (req, res) => {
   }
 };
 
+//get Merchant Data
+export const merchantDetails= async (req, res) => {
+    const merchantId = req.id;
+  try {
+    // Check for existing merchant
+    const merchant = await Merchant.findOne({
+      where: { merchantId },
+      attributes: { exclude: ["createdAt", "updatedAt","password"] },
+    });
+    if (!merchant) {
+      return res.status(404).json({
+        message: "No Merchant found",
+        success: false,
+      });
+    }
+
+    
+    
+    return res.status(200).json({
+      message: "Getting merchant details",
+      success: true,
+      merchant,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Error while getting merchant details",
+    });
+  }
+};
 //funtion for merchant login
 export const merchantLogin = async (req, res) => {
   const { contactNo, password } = req.body;

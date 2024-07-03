@@ -100,6 +100,35 @@ export const consumerLogin = async (req, res) => {
   }
 };
 
+//consumer details
+export const consumerDetails= async (req, res) => {
+  const consumerId = req.id;
+try {
+  // Check for existing merchant
+  const consumer = await Consumer.findOne({
+    where: { consumerId },
+    attributes: { exclude: ["createdAt", "updatedAt","password"] },
+  });
+  if (!consumer) {
+    return res.status(404).json({
+      message: "No Consumer found",
+      success: false,
+    });
+  }  
+  
+  return res.status(200).json({
+    message: "Getting merchant details",
+    success: true,
+    consumer,
+  });
+} catch (error) {
+  console.log(error);
+  return res.status(500).json({
+    message: "Error while getting consumer details",
+  });
+}
+};
+
 //get All consumer
 export const getAllConsumer = async (req, res) => {
   try {

@@ -5,7 +5,7 @@ export const bodyValidator = (schema) => async (req, res, next) => {
       query: req.query,
       params: req.params,
     });
-    console.log(parseBody);
+    // console.log(parseBody);
 
     req.body = parseBody?.body;
     req.query = parseBody?.query;
@@ -13,7 +13,8 @@ export const bodyValidator = (schema) => async (req, res, next) => {
 
     next();
   } catch (err) {
-    const msg = err.errors[0].message;
+    const msg = err?.errors[0]?.message;
+    // console.log(err)
     return res.status(400).json({
       message: msg,
       success: false,
