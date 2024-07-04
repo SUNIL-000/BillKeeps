@@ -24,7 +24,11 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}
+));
 app.use(morgan("dev"));
 app.use("/uploads", express.static("uploads"));
 
@@ -40,7 +44,7 @@ app.use("/api/v1/invoice", invoice);
 app.use("/api/v1/invoice-item", invoiceItem);
 
 // connect to the server and database
-app.listen(process.env.PORT , async () => {
+app.listen(process.env.PORT, async () => {
   console.log(`Server running on http://localhost:${process.env.PORT}`);
   try {
     await sequelize.authenticate();
