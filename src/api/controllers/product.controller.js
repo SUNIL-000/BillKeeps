@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { Product, Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
 
@@ -47,8 +48,7 @@ export const NewProduct = async (req, res) => {
 };
 
 
-
-//funtion for deleting exsting product
+//funtion for updating exsting product
 export const updateProduct = async (req, res) => {
   const { productId } = req.params;
   const merchantId = req.id
@@ -101,7 +101,8 @@ export const updateProduct = async (req, res) => {
     });
   }
 };
-//funtion for updating exsting product
+//funtion for deleting exsting product
+
 export const deleteProduct = async (req, res) => {
   const { productId } = req.params;
   const merchantId = req.id;
@@ -182,9 +183,7 @@ export const getSingleProduct = async (req, res) => {
   }
 };
 
-
-
-///
+//
 export const getAllProductOfSingleMerchant = async (req, res) => {
 
   const merchantId = req.id;
@@ -202,7 +201,7 @@ export const getAllProductOfSingleMerchant = async (req, res) => {
       where: { merchantId },
       include: {
         model: Product,
-        attributes: { exclude: ["createdAt", "updatedAt"] },
+        attributes: { exclude: ["createdAt", "updatedAt",'merchantId'] },
       },
       attributes: ['merchantId'],
     });
@@ -222,7 +221,7 @@ export const getAllProductOfSingleMerchant = async (req, res) => {
     }
 
     return res.status(200).json({
-      message: `Getting all product accountwith merchantId ${merchantId}`,
+      message: `Getting all products with merchantId ${merchantId}`,
       success: true,
       merchantsProduct
     });
@@ -236,6 +235,53 @@ export const getAllProductOfSingleMerchant = async (req, res) => {
   }
 };
 
+//search product by its name
+export const searchProduct = async (req, res) => {
+
+  const merchantId = req.id;
+  const { name } = req.query;
+
+  try {
+
+    if (!merchantId) {
+      return res.status(400).json({
+        message: "merchantId required",
+        success: false,
+      });
+    }
+
+    const searchProduct = await Product.findAll({
+      where: {
+        merchantId: merchantId,
+        name: {
+          [Op.iLike]: `%${name.trim()}%`
+        }
+      },
+      attributes:{exclude:['createdAt','updatedAt','merchantId']}
+
+    });
+
+    if (!searchProduct || searchProduct.length == 0) {
+      return res.status(400).json({
+        message: "No Product found ",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: `Getting products `,
+      success: true,
+      searchProduct
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      message: "Error while searching the product.",
+      success: false,
+      error,
+    });
+  }
+};
 
 //funtion for getting all product
 export const getAllProduct = async (req, res) => {

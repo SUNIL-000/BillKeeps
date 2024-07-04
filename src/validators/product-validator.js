@@ -1,3 +1,4 @@
+import { query } from "express";
 import { z } from "zod";
 
 export const createProductValidation = z.object({
@@ -48,6 +49,16 @@ export const singleProductValidation = z.object({
     productId: z
       .string({ required_error: "productId must required" })
       .length(10, { message: "productId must be of 10 digit" }),
+
+  })
+});
+
+export const searchProductValidation = z.object({
+
+  query: z.object({
+    name: z
+      .string({ required_error: "name must be required" })
+      .min(1, { message: "name atleast  of 1 charecter" }),
 
   })
 });

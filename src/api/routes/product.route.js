@@ -1,8 +1,8 @@
 import express from "express";
-import { NewProduct, deleteProduct, getAllProduct, getAllProductOfSingleMerchant, getSingleProduct, updateProduct } from "../controllers/product.controller.js";
+import { NewProduct, deleteProduct, getAllProduct, getAllProductOfSingleMerchant, getSingleProduct, searchProduct, updateProduct } from "../controllers/product.controller.js";
 import { isMerchant } from "../middleware/merchantMiddleware.js";
 import { bodyValidator } from "../middleware/Zod.js";
-import { createProductValidation, deleteProductValidation, singleProductValidation, updateProductValidation } from "../../validators/product-validator.js";
+import { createProductValidation, deleteProductValidation, searchProductValidation, singleProductValidation, updateProductValidation } from "../../validators/product-validator.js";
 
 export const productRoutes=express.Router();
 
@@ -15,9 +15,17 @@ productRoutes.delete("/delete/:productId",isMerchant,bodyValidator(deleteProduct
 //get single product
 productRoutes.get("/:productId",isMerchant,bodyValidator(singleProductValidation),getSingleProduct)
 //get all product of a merchant
-productRoutes.get("/all/merchant", isMerchant, getAllProductOfSingleMerchant)
+productRoutes.get("/all/merchant", isMerchant , getAllProductOfSingleMerchant)
+
+//seach product on the basis of name
+productRoutes.get("/search/name", isMerchant ,bodyValidator(searchProductValidation), searchProduct)
+
+
+
+
+
 
 //ignore this--- For testing purpose
-productRoutes.get("/no",getAllProduct)
+productRoutes.get("/all/product",getAllProduct)
 
 
