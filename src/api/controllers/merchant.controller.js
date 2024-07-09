@@ -2,7 +2,7 @@ import { rm } from "fs";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { Product, Merchant } from "../../db/models/index.js";
+import {  Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
 ``;
 //creating a new merchant account

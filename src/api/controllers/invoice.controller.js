@@ -189,6 +189,7 @@ export const getInvoiceOfConsumer = async (req, res) => {
   try {
     const allInvoices = await Invoice.findAll({
       where: { consumerId },
+      
       attributes: { exclude: ["createdAt", "updatedAt", "merchantId", "consumerId"] },
       include: [
         {

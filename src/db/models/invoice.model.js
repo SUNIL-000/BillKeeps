@@ -30,6 +30,9 @@ export const Invoice = sequelize.define(
     },
     exchangeValidity: {
       type: DataTypes.INTEGER
+    },
+    url: {
+      type: DataTypes.STRING
     }
   },
   { timestamps: true }
