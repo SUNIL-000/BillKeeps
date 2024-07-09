@@ -13,8 +13,7 @@ const item = z.object({
     discountPercent: z.number()
         .optional(),
 
-    salePrice: z.number({ required_error: "salePrice required" })
-        .gt(0, { message: "salePrice must be greater than 0" }),
+    
 });
 
 export const invoiceValidation = z.object({
@@ -30,8 +29,7 @@ export const invoiceValidation = z.object({
         exchangeValidity: z.number({ required_error: "exchangeValidity required" })
             .min(1, { message: "exchangeValidity must be at least 1" }),
 
-        totalAmount: z.number({ required_error: "totalAmount required" })
-            .gt(0, { message: "totalAmount must be greater than 0" }),
+       
     })
 
 });

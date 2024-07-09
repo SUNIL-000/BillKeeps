@@ -9,15 +9,17 @@ import {
 
 export const newInvoice = async (req, res) => {
   const { consumerId, items, returnValidity,
-    exchangeValidity, totalAmount } = req.body;
+    exchangeValidity } = req.body;
 
   const merchantId = req.id;
-  console.log(merchantId)
+
 
   try {
     const invoiceId = generateID("I");
+    let totalAmount = 0;
 
     const isConsumer = await Consumer.findByPk(consumerId)
+
     if (!isConsumer) {
       return res.status(404).json({
         message: `No consumer found with consumerId ${consumerId}`,
@@ -30,32 +32,68 @@ export const newInvoice = async (req, res) => {
       invoiceId,
       merchantId,
       consumerId,
-      totalAmount,
       returnValidity,
       exchangeValidity
     });
 
-    //mapping the array so that invoiceItemId and invioiceId will also include
-    const finalItems = items.map((item) => {
-      return {
+    let finalItems = [];
+    for (const data of items) {
+
+      const pdata = await Product.findByPk(data?.productId);
+
+      if (!pdata) {
+        await newInvoice.destroy();
+        console.log("Invoice deleted")
+        return res
+          .status(404)
+          .json({ message: "Product not found..", success: false });
+      }
+
+      let beforeDiscount = pdata?.mrp * data?.quantity;
+      console.log("before discount", beforeDiscount);
+
+      let finalDiscountPrice = beforeDiscount;
+
+      if (data?.discountAmount) {
+        finalDiscountPrice = beforeDiscount - data?.discountAmount;
+      }
+
+      if (data?.discountPercent) {
+        const discount = beforeDiscount * (data?.discountPercent / 100);
+        finalDiscountPrice = beforeDiscount - discount;
+      }
+
+      console.log("final price", finalDiscountPrice);
+
+      totalAmount += finalDiscountPrice;
+
+      finalItems.push({
         invoiceItemId: generateID("IT"),
         invoiceId: invoiceId,
-        productId: item.productId,
-        quantity: item.quantity,
-        discountAmount: item.discountAmount,
-        discountPercent: item.discountPercent,
-        salePrice: item.salePrice,
-      };
-    });
-    //passing the whole items array
+        productId: data?.productId,
+        quantity: data?.quantity,
+        discountAmount: data?.discountAmount,
+        discountPercent: data?.discountPercent,
+        salePrice: finalDiscountPrice,
+      })
+
+    }
     const newInvoiceItem = await InvoiceItem.bulkCreate(finalItems);
 
+    //passing the whole items array
+
     if (!newInvoiceItem) {
+      await newInvoice.destroy();
+      console.log("Invoice deleted")
       return res.status(400).json({
         message: "Failed to create invoice items..",
         success: false,
       });
     }
+
+    newInvoice.totalAmount = totalAmount;
+    await newInvoice.save();
+    
     if (!newInvoice) {
       return res.status(400).json({
         message: "Failed to create invoice .",
@@ -72,6 +110,7 @@ export const newInvoice = async (req, res) => {
   }
   catch (error) {
     console.log(error);
+    
     return res.status(500).json({
       message: "Error while creating new Invoice .",
       success: false,
@@ -146,7 +185,7 @@ export const deletSingleInvoice = async (req, res) => {
 
 //GET ALL invoice with respect to consumer id
 export const getInvoiceOfConsumer = async (req, res) => {
-  const  consumerId  = req.id;
+  const consumerId = req.id;
   try {
     const allInvoices = await Invoice.findAll({
       where: { consumerId },
@@ -187,18 +226,71 @@ export const getInvoiceOfConsumer = async (req, res) => {
       allInvoices,
     });
   } catch (error) {
-    console.error( error);
+    console.error(error);
     return res.status(500).json({
       message: "Error while getting invoices for a consumer",
       success: false,
     });
   }
 };
+export const getInvoiceOfMerchant = async (req, res) => {
+
+  const merchantId = req.id;
+
+  try {
+    const allInvoices = await Invoice.findAll({
+      where: { merchantId },
+      attributes: { exclude: ["createdAt", "updatedAt", "merchantId", "merchantId"] },
+      include: [
+        {
+          model: InvoiceItem,
+          attributes: { exclude: ["createdAt", "updatedAt", "invoiceId", "productId"] },
+          include: [
+            {
+              model: Product,
+              attributes: { exclude: ["createdAt", "updatedAt", "merchantId"] },
+            },
+          ],
+        },
+        {
+          model: Consumer,
+          attributes: { exclude: ["createdAt", "updatedAt", "password"] },
+        },
+        {
+          model: Merchant,
+          attributes: { exclude: ["createdAt", "updatedAt", "password"] },
+        },
+      ],
+      order: [['invoiceDate', 'DESC']]
+    });
+
+    if (!allInvoices ) {
+      return res.status(404).json({
+        message: `No invoices found with merchantId ${merchantId}`,
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: `Getting all invoices having merchantId ${merchantId}`,
+      success: true,
+      allInvoices,
+    });
+  } 
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error while getting invoices for a merchant",
+      success: false,
+    });
+  }
+};
+
 
 
 //get single invoice 
-export const getSingleInvoice = async (req,res)=>{
-  const  {invoiceId}  = req.params;
+export const getSingleInvoice = async (req, res) => {
+  const { invoiceId } = req.params;
   try {
     const singleInvoice = await Invoice.findOne({
       where: { invoiceId },
@@ -223,7 +315,7 @@ export const getSingleInvoice = async (req,res)=>{
           attributes: { exclude: ["createdAt", "updatedAt", "password"] },
         },
       ],
-     
+
     });
 
     if (!singleInvoice || singleInvoice.length === 0) {
@@ -239,7 +331,7 @@ export const getSingleInvoice = async (req,res)=>{
       singleInvoice,
     });
   } catch (error) {
-    console.error( error);
+    console.error(error);
     return res.status(500).json({
       message: "Error while single invoice",
       success: false,

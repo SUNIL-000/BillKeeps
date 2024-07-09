@@ -3,7 +3,7 @@ import { Sequelize, DataTypes } from "sequelize";
 import { sequelize } from "../../config/db.js";
 
 export const InvoiceItem = sequelize.define(
-  "invoiceItem",
+  "invoice_item",
   {
     invoiceItemId: {
       type: DataTypes.STRING,
