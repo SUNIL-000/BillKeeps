@@ -24,7 +24,7 @@ export const merchantSignupValidation = z.object({
       .max(100, { message: "businessType must be at most 100 characters" })
       .optional(),
 
-    businessLogoUrl: z.string().optional(),
+    
   })
 
 });

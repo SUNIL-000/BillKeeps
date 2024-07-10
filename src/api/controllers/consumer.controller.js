@@ -7,16 +7,16 @@ export const createNewConsumer = async (req, res) => {
   const { password, contactNo } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
 
-  //from UUID we just create merchantId
+  //from UUID we just create consumerId
   let consumerId = generateID("C");
   try {
-    //check for exsting consumer
+    //check for existing consumer
     const existingConsumer = await Consumer.findOne({
       where: { contactNo: contactNo },
     });
     if (existingConsumer) {
       return res.status(400).json({
-        message: "You are already registered please login",
+        message: "You are already registered, please login",
         success: false,
       });
     }
@@ -36,28 +36,28 @@ export const createNewConsumer = async (req, res) => {
 
     if (!newConsumer) {
       return res.status(400).json({
-        message: "failed to create new Consumer",
+        message: "Failed to create new consumer",
       });
     }
     return res.status(201).json({
-      message: "New consumer created successfully..",
+      message: "New consumer created successfully",
       success: true,
       token,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: " Error while creating new consumer..",
+      message: "Error while creating new consumer",
     });
   }
 };
 
-//funtion for consumer login
+// Function for consumer login
 export const consumerLogin = async (req, res) => {
   const { contactNo, password } = req.body;
 
   try {
-    //check for exsting consumer
+    // Check for existing consumer
     const consumer = await Consumer.findOne({
       where: { contactNo: contactNo },
       attributes: {
@@ -67,7 +67,7 @@ export const consumerLogin = async (req, res) => {
 
     if (!consumer) {
       return res.status(404).json({
-        message: "Consumer not found .Register first",
+        message: "Consumer not found. Please register first",
         success: false,
       });
     }
@@ -82,54 +82,54 @@ export const consumerLogin = async (req, res) => {
     let isMatch = bcrypt.compareSync(password, consumer?.password);
     if (!isMatch) {
       return res.status(400).json({
-        message: "Credential mismatch..",
+        message: "Credentials mismatch",
         success: false,
       });
     }
 
     return res.status(200).json({
-      message: "You are successfully loggedin..",
+      message: "You are successfully logged in",
       success: true,
       token,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: " Error while logged into consumer account",
+      message: "Error while logging into consumer account",
     });
   }
 };
 
-//consumer details
-export const consumerDetails= async (req, res) => {
+// Consumer details
+export const consumerDetails = async (req, res) => {
   const consumerId = req.id;
-try {
-  // Check for existing merchant
-  const consumer = await Consumer.findOne({
-    where: { consumerId },
-    attributes: { exclude: ["createdAt", "updatedAt","password"] },
-  });
-  if (!consumer) {
-    return res.status(404).json({
-      message: "No Consumer found",
-      success: false,
+  try {
+    // Check for existing consumer
+    const consumer = await Consumer.findOne({
+      where: { consumerId },
+      attributes: { exclude: ["createdAt", "updatedAt", "password"] },
     });
-  }  
-  
-  return res.status(200).json({
-    message: "Getting merchant details",
-    success: true,
-    consumer,
-  });
-} catch (error) {
-  console.log(error);
-  return res.status(500).json({
-    message: "Error while getting consumer details",
-  });
-}
+    if (!consumer) {
+      return res.status(404).json({
+        message: "No consumer found",
+        success: false,
+      });
+    }  
+
+    return res.status(200).json({
+      message: "Getting consumer details",
+      success: true,
+      consumer,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Error while getting consumer details",
+    });
+  }
 };
 
-//get All consumer
+// Get all consumers
 export const getAllConsumer = async (req, res) => {
   try {
     const allConsumer = await Consumer.findAll({
@@ -140,16 +140,17 @@ export const getAllConsumer = async (req, res) => {
 
     if (!allConsumer || allConsumer.length == 0) {
       return res.status(400).json({
-        message: "No Consumer found",
+        message: "No consumers found",
       });
     }
     return res.status(200).json({
-      message: "Consumers account found successfully",
+      message: "Consumer accounts found successfully",
       allConsumer,
     });
   } catch (error) {
     return res.status(500).json({
-      message: " Error fetching new consumer..",
+      message: "Error while fetching consumer accounts",
+      success: false,
     });
   }
 };

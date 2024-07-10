@@ -1,4 +1,5 @@
 import { Invoice, InvoiceItem, Product } from "../../db/models/index.js";
+
 export const getAllInvoiceItem = async (req, res) => {
   try {
     const allInvoiceItem = await InvoiceItem.findAll({
@@ -11,19 +12,19 @@ export const getAllInvoiceItem = async (req, res) => {
 
     if (!allInvoiceItem) {
       return res.status(404).json({
-        message: "No invoice items has been found",
+        message: "No invoice items found",
         success: false,
       });
     }
     return res.status(200).json({
-      message: "Getting all invoice item record",
+      message: "Retrieved all invoice item records",
       success: true,
       allInvoiceItem,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: "Error while fetching all invoice record",
+      message: "Error while fetching all invoice item records",
       success: false,
     });
   }
@@ -38,22 +39,23 @@ export const deleleInvoiceItem = async (req, res) => {
 
     if (!DeleteItem) {
       return res.status(404).json({
-        message: "No invoice item has been found",
+        message: "No invoice item found",
         success: false,
       });
     }
     return res.status(200).json({
-      message: "Invoice item deleted",
+      message: "Invoice item deleted successfully",
       success: true,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: "Error while deleting invoice record",
+      message: "Error while deleting invoice item",
       success: false,
     });
   }
 };
+
 //get all invoiceitem with respect to invoice id
 export const getAllInvoiceItemWithInvoiceId = async (req, res) => {
   const { invoiceId } = req.params;
@@ -69,24 +71,23 @@ export const getAllInvoiceItemWithInvoiceId = async (req, res) => {
 
     if (!allInvoiceItem) {
       return res.status(404).json({
-        message: `No invoice items has been found with invoice id ${invoiceId}`,
+        message: `No invoice items found with invoice ID ${invoiceId}`,
         success: false,
       });
     }
     return res.status(200).json({
-      message: `Getting all invoice item record having invoiceId ${invoiceId}`,
+      message: `Getting all invoice item records with invoice ID ${invoiceId}`,
       success: true,
       allInvoiceItem,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: `Error while getting all invoice item record having invoiceId ${invoiceId}`,
+      message: `Error while fetching all invoice item records with invoice ID ${invoiceId}`,
       success: false,
     });
   }
 };
-
 
 //getting invoice items with its product details
 export const getAllInvoiceItemWithItsProducts = async (req, res) => {
@@ -103,19 +104,19 @@ export const getAllInvoiceItemWithItsProducts = async (req, res) => {
 
     if (!allInvoiceItem) {
       return res.status(404).json({
-        message: `No invoice items has been found with product id ${invoiceId}`,
+        message: `No invoice items found with invoice ID ${invoiceId}`,
         success: false,
       });
     }
     return res.status(200).json({
-      message: `Getting all invoice item record having invoiceId ${invoiceId}`,
+      message: `Retrieved all invoice item records with invoice ID ${invoiceId}`,
       success: true,
       allInvoiceItem,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: `Error while getting all invoice item record having product id ${invoiceId}`,
+      message: `Error while fetching all invoice item records with invoice ID ${invoiceId}`,
       success: false,
     });
   }

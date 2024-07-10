@@ -93,7 +93,7 @@ export const newInvoice = async (req, res) => {
 
     newInvoice.totalAmount = totalAmount;
     await newInvoice.save();
-    
+
     if (!newInvoice) {
       return res.status(400).json({
         message: "Failed to create invoice .",
@@ -110,7 +110,7 @@ export const newInvoice = async (req, res) => {
   }
   catch (error) {
     console.log(error);
-    
+
     return res.status(500).json({
       message: "Error while creating new Invoice .",
       success: false,
@@ -189,7 +189,7 @@ export const getInvoiceOfConsumer = async (req, res) => {
   try {
     const allInvoices = await Invoice.findAll({
       where: { consumerId },
-      
+
       attributes: { exclude: ["createdAt", "updatedAt", "merchantId", "consumerId"] },
       include: [
         {
@@ -265,7 +265,7 @@ export const getInvoiceOfMerchant = async (req, res) => {
       order: [['invoiceDate', 'DESC']]
     });
 
-    if (!allInvoices ) {
+    if (!allInvoices) {
       return res.status(404).json({
         message: `No invoices found with merchantId ${merchantId}`,
         success: false,
@@ -277,7 +277,7 @@ export const getInvoiceOfMerchant = async (req, res) => {
       success: true,
       allInvoices,
     });
-  } 
+  }
   catch (error) {
     console.error(error);
     return res.status(500).json({

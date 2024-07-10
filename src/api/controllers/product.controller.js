@@ -2,21 +2,21 @@ import { Op } from "sequelize";
 import { Product, Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
 
-//funtion for newproduct creation
+// Function for new product creation
 export const NewProduct = async (req, res) => {
   const { name, desc, mrp } = req.body;
   const merchantId = req.id;
 
   try {
-
-    const isMerchant = await Merchant.findOne({ where: { merchantId } })
+    const isMerchant = await Merchant.findOne({ where: { merchantId } });
 
     if (!isMerchant) {
       return res.status(400).json({
-        messgae: "Merchant account not found..",
+        message: "Merchant account not found.",
         success: false,
       });
     }
+
     const productId = generateID("P");
     const newProduct = await Product.create({
       productId,
@@ -28,55 +28,55 @@ export const NewProduct = async (req, res) => {
 
     if (!newProduct) {
       return res.status(400).json({
-        messgae: "Failed to create new product",
+        message: "Failed to create new product",
         success: false,
       });
     }
 
     return res.status(201).json({
-      messgae: "New Product Created successfully",
+      message: "New Product created successfully",
       success: true,
       newProduct,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      messgae: "error while creating new product",
+      message: "Error while creating new product",
       success: false,
     });
   }
 };
 
-
-//funtion for updating exsting product
+// Function for updating existing product
 export const updateProduct = async (req, res) => {
   const { productId } = req.params;
-  const merchantId = req.id
+  const merchantId = req.id;
   const { name, mrp, desc } = req.body;
 
   try {
     if (!productId) {
       return res.status(400).json({
-        message: "Please provide product id",
+        message: "Please provide product ID",
         success: false,
       });
     }
 
     const existProduct = await Product.findByPk(productId);
 
-
-    if (!existProduct || existProduct.length == 0) {
+    if (!existProduct) {
       return res.status(404).json({
-        messgae: `No product found with productId ${productId}`,
+        message: `No product found with productId ${productId}`,
         success: false,
       });
     }
+
     if (merchantId != existProduct.merchantId) {
       return res.status(400).json({
-        messgae: `You are not the owner of this product`,
+        message: "You are not the owner of this product",
         success: false,
       });
     }
+
     if (name) {
       existProduct.name = name;
     }
@@ -89,63 +89,62 @@ export const updateProduct = async (req, res) => {
     await existProduct.save();
 
     return res.status(200).json({
-      messgae: "Product updated successfully",
+      message: "Product updated successfully",
       success: true,
       existProduct,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      messgae: "error while updating the product",
+      message: "Error while updating the product",
       success: false,
     });
   }
 };
-//funtion for deleting exsting product
 
+// Function for deleting existing product
 export const deleteProduct = async (req, res) => {
   const { productId } = req.params;
   const merchantId = req.id;
 
   try {
-
-
     const existProduct = await Product.findByPk(productId);
 
-    if (!existProduct || existProduct.length == 0) {
+    if (!existProduct) {
       return res.status(404).json({
-        messgae: "No product found.",
+        message: "No product found.",
         success: false,
       });
     }
+
     if (merchantId != existProduct.merchantId) {
       return res.status(400).json({
-        messgae: `You are not the owner of this product`,
+        message: "You are not the owner of this product",
         success: false,
       });
     }
+
     await existProduct.destroy();
 
     return res.status(200).json({
-      messgae: "Product deleted successfully",
+      message: "Product deleted successfully",
       success: true,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      messgae: "error while deleting the product",
+      message: "Error while deleting the product",
       success: false,
     });
   }
 };
 
-//get single product
+// Get single product
 export const getSingleProduct = async (req, res) => {
   const { productId } = req.params;
   const merchantId = req.id;
 
   try {
-
     const singleProduct = await Product.findOne({
       where: { productId },
       attributes: { exclude: ['createdAt', 'updatedAt'] },
@@ -155,41 +154,39 @@ export const getSingleProduct = async (req, res) => {
       }
     });
 
-    if (!singleProduct || singleProduct.length == 0) {
+    if (!singleProduct) {
       return res.status(404).json({
-        messgae: "No product found.",
+        message: "No product found.",
         success: false,
       });
     }
-    if (merchantId != singleProduct?.merchant.merchantId) {
+
+    if (merchantId != singleProduct.merchant.merchantId) {
       return res.status(400).json({
-        messgae: `You are not the owner of this product`,
+        message: "You are not the owner of this product",
         success: false,
       });
     }
-    console.log(merchantId)
 
     return res.status(200).json({
-      messgae: "Single product details",
+      message: "Single product details",
       success: true,
-      singleProduct
+      singleProduct,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      messgae: "error while getting single product",
+      message: "Error while getting single product",
       success: false,
     });
   }
 };
 
-//
+// Get all products of a single merchant
 export const getAllProductOfSingleMerchant = async (req, res) => {
-
   const merchantId = req.id;
 
   try {
-
     if (!merchantId) {
       return res.status(400).json({
         message: "merchantId required",
@@ -201,21 +198,21 @@ export const getAllProductOfSingleMerchant = async (req, res) => {
       where: { merchantId },
       include: {
         model: Product,
-        attributes: { exclude: ["createdAt", "updatedAt",'merchantId'] },
+        attributes: { exclude: ["createdAt", "updatedAt", "merchantId"] },
       },
       attributes: ['merchantId'],
     });
 
     if (!merchantsProduct) {
       return res.status(400).json({
-        message: "No merchant account has been found... ",
+        message: "No merchant account has been found.",
         success: false,
       });
     }
 
     if (merchantsProduct.products.length == 0) {
       return res.status(200).json({
-        message: `No product has been associated with merchantId ${merchantId} `,
+        message: `No product has been associated with merchantId ${merchantId}`,
         success: false,
       });
     }
@@ -223,26 +220,24 @@ export const getAllProductOfSingleMerchant = async (req, res) => {
     return res.status(200).json({
       message: `Getting all products with merchantId ${merchantId}`,
       success: true,
-      merchantsProduct
+      merchantsProduct,
     });
   } catch (error) {
     console.log(error);
     return res.status(400).json({
-      message: "Error while getting all product created by the merchant.",
+      message: "Error while getting all products created by the merchant.",
       success: false,
       error,
     });
   }
 };
 
-//search product by its name
+// Search product by its name
 export const searchProduct = async (req, res) => {
-
   const merchantId = req.id;
   const { name } = req.query;
 
   try {
-
     if (!merchantId) {
       return res.status(400).json({
         message: "merchantId required",
@@ -257,21 +252,20 @@ export const searchProduct = async (req, res) => {
           [Op.iLike]: `%${name.trim()}%`
         }
       },
-      attributes:{exclude:['createdAt','updatedAt','merchantId']}
-
+      attributes: { exclude: ['createdAt', 'updatedAt', 'merchantId'] },
     });
 
     if (!searchProduct || searchProduct.length == 0) {
       return res.status(400).json({
-        message: "No Product found ",
+        message: "No product found",
         success: false,
       });
     }
 
     return res.status(200).json({
-      message: `Getting products `,
+      message: "Getting products",
       success: true,
-      searchProduct
+      searchProduct,
     });
   } catch (error) {
     console.log(error);
@@ -283,31 +277,29 @@ export const searchProduct = async (req, res) => {
   }
 };
 
-//funtion for getting all product
+// Function for getting all products
 export const getAllProduct = async (req, res) => {
   try {
-    const allProduct = await Product.findAll({
+    const allProducts = await Product.findAll({
       attributes: { exclude: ["createdAt", "updatedAt"] },
-
-
     });
 
-    if (!allProduct || allProduct.length == 0) {
+    if (!allProducts || allProducts.length == 0) {
       return res.status(404).json({
-        messgae: "No product found.",
+        message: "No product found.",
         success: false,
       });
     }
 
     return res.status(200).json({
-      messgae: "Getting all product",
+      message: "Getting all products",
       success: true,
-      allProduct,
+      allProducts,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      messgae: "error while fetching all product",
+      message: "Error while fetching all products",
       success: false,
     });
   }
