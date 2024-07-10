@@ -19,7 +19,7 @@ export const createNewMerchant = async (req, res) => {
 
     if (existingMerchant) {
       if (businessLogoUrl) {
-        rm(businessLogoUrl.path, () => {
+        rm(businessLogoUrl?.path, () => {
           console.log("Photo deleted");
         });
       }
@@ -35,7 +35,7 @@ export const createNewMerchant = async (req, res) => {
     const newMerchant = await Merchant.create({
       merchantId,
       businessName,
-      businessLogoUrl: `${businessLogoUrl ? businessLogoUrl.path : ""}`,
+      businessLogoUrl: `${businessLogoUrl ? businessLogoUrl?.path : ""}`,
       gstNo,
       address,
       businessType,
