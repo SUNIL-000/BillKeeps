@@ -21,7 +21,7 @@ export const invoiceValidation = z.object({
         consumerId: z.string({ required_error: "consumerId required" })
             .length(10, { message: "consumerId must be of 10 letters" }),
 
-        items: z.array(item).min(1,{message:"minimum 1 item required"}),
+        items: z.array(item,{required_error:"minimum 1 item required"}),
 
         returnValidity: z.number({ required_error: "returnValidity required" })
             .min(1, { message: "returnValidity must be at least 1" })
