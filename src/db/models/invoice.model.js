@@ -27,13 +27,13 @@ export const Invoice = sequelize.define(
     },
     returnValidity: {
       type: DataTypes.INTEGER,
+      defaultValue: 0
     },
     exchangeValidity: {
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     },
-    url: {
-      type: DataTypes.STRING
-    }
+
   },
   { timestamps: true }
 );
