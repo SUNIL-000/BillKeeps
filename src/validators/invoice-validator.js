@@ -24,12 +24,10 @@ export const invoiceValidation = z.object({
         items: z.array(item,{required_error:"minimum 1 item required"}),
 
         returnValidity: z.number({ required_error: "returnValidity required" })
-            .min(1, { message: "returnValidity must be at least 1" })
             .optional(),
             
 
         exchangeValidity: z.number({ required_error: "exchangeValidity required" })
-            .min(1, { message: "exchangeValidity must be at least 1" })
             .optional(),
 
        
