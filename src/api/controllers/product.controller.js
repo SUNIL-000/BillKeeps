@@ -54,14 +54,12 @@ export const updateProduct = async (req, res) => {
   const { name, mrp, desc } = req.body;
 
   try {
-    if (!productId) {
-      return res.status(400).json({
-        message: "Please provide product ID",
-        success: false,
-      });
-    }
 
-    const existProduct = await Product.findByPk(productId);
+    const existProduct = await Product.findOne({
+      where: {
+        productId, merchantId
+      }
+    });
 
     if (!existProduct) {
       return res.status(404).json({
@@ -70,22 +68,9 @@ export const updateProduct = async (req, res) => {
       });
     }
 
-    if (merchantId != existProduct.merchantId) {
-      return res.status(400).json({
-        message: "You are not the owner of this product",
-        success: false,
-      });
-    }
+    existProduct.update({ name, mrp, desc: desc.length > 0 ? desc : existProduct.desc })
 
-    if (name) {
-      existProduct.name = name;
-    }
-    if (mrp) {
-      existProduct.mrp = mrp;
-    }
-    if (desc) {
-      existProduct.desc = desc;
-    }
+
     await existProduct.save();
 
     return res.status(200).json({
