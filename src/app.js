@@ -3,7 +3,9 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import dotenv from "dotenv";
-
+import path from "path"
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 import { merchantRoutes } from "./api/routes/merchant.route.js";
 import { consumerRouter } from "./api/routes/consumer.route.js";
 import { productRoutes } from "./api/routes/product.route.js";
@@ -23,14 +25,25 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.set("view engine", "ejs")
 
+app.use(morgan("dev"));
+app.use("/uploads", express.static("uploads"));
+app.use("/public", express.static("public"));
+
+// app.set("views", path.join(__dirname, "views"));
+//cors origin
 app.use(cors({
-  origin: ["http://localhost:5173","http://localhost:5174"],
+  origin: ["http://localhost:5173", "http://localhost:5174"],
   credentials: true
 }
 ));
-app.use(morgan("dev"));
-app.use("/uploads", express.static("uploads"));
+const filename = fileURLToPath(import.meta.url)
+const dir = dirname(filename)
+console.log(filename);
+console.log(dir)
+app.set("views", path.join(dir, "views"))
+
 
 
 // API base point
@@ -43,6 +56,10 @@ app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/invoice", invoice);
 app.use("/api/v1/invoice-item", invoiceItem);
 
+
+
+
+
 // connect to the server and database
 app.listen(process.env.PORT, async () => {
   console.log(`Server running on http://localhost:${process.env.PORT}`);
@@ -52,4 +69,5 @@ app.listen(process.env.PORT, async () => {
   } catch (error) {
     console.error("Unable to connect to the database:", error.message);
   }
+
 });

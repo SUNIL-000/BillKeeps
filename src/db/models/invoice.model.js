@@ -33,6 +33,10 @@ export const Invoice = sequelize.define(
       type: DataTypes.INTEGER,
       defaultValue: 0
     },
+    invoiceUrl:{
+      type:DataTypes.STRING,
+      allowNull:true
+    },
 
   },
   { timestamps: true }

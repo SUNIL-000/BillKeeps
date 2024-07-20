@@ -68,7 +68,7 @@ export const updateProduct = async (req, res) => {
       });
     }
 
-    existProduct.update({ name, mrp, desc: desc.length > 0 ? desc : existProduct.desc })
+    existProduct.update({ name, mrp, desc })
 
 
     await existProduct.save();

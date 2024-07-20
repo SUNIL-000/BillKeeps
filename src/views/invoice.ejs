@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            padding: 5px 2px 10px;
+            overflow-x: hidden;
+        }
+
+        .invoice {
+            transform: scale(0.75);
+            transform-origin: 0 0;
+            min-width: 500px;
+            width: 100%;
+            max-width: 768px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+        }
+
+        @media (min-width: 640px) {
+            .invoice {
+                transform: scale(1);
+            }
+        }
+
+        .invoice-top {
+            border-bottom: 2px solid #463ACC;
+            padding-bottom: 20px;
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .invoice-logo {
+            width: 48%;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            padding: 2px;
+            border: 2px solid #463ACC;
+        }
+
+        .invoice-details {
+            width: 48%;
+        }
+
+        span {
+            font-size: 20px;
+            color: #463ACC;
+            font-weight: 500;
+        }
+
+        .invoice-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #463ACC;
+        }
+
+        .invoice-id,
+        .invoice-to,
+        .business-details {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .invoice-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .invoice-to,
+        .business-details {
+            width: 48%;
+        }
+
+        .highlight {
+            color: #463ACC;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .invoice-body {
+            padding: 20px 0;
+            border-bottom: 2px solid #463ACC;
+        }
+
+        .invoice-summary {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+        }
+
+        .validity-info,
+        .total-info {
+            flex: 1;
+        }
+
+        .total-amount {
+            text-align: center;
+            font-weight: bold;
+            padding: 10px;
+            background: #463ACC;
+            color: white;
+        }
+
+        .invoice-bottom {
+            padding-top: 20px;
+        }
+
+        .return-policy-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .return-policy-text {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        span {
+            color: #463ACC;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            padding: 30px 0;
+        }
+
+
+        .retur {
+            color: black;
+            font-weight: 700;
+            font-size: 20px;
+            text-align: left;
+            margin-bottom: -10px;
+        }
+        .fl-table {
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: normal;
+            border: none;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 100%;
+            white-space: nowrap;
+            background-color: white;
+        }
+
+        .fl-table td,
+        .fl-table th {
+            text-align: center;
+            padding: 8px;
+        }
+
+        .fl-table td {
+            border-right: 1px solid #f8f8f8;
+            font-size: 12px;
+        }
+
+        .fl-table thead th {
+            color: #ffffff;
+            background: #463ACC;
+        }
+
+
+
+
+
+
+        /* Responsive */
+
+        @media (max-width: 767px) {
+            .fl-table {
+                display: block;
+                width: 100%;
+            }
+
+            .table-wrapper:before {
+                content: "Scroll horizontally >";
+                display: block;
+                text-align: right;
+                font-size: 11px;
+                color: white;
+                padding: 0 0 10px;
+            }
+
+            .fl-table thead,
+            .fl-table tbody,
+            .fl-table thead th {
+                display: block;
+            }
+
+            .fl-table thead {
+                float: left;
+            }
+
+            .fl-table td,
+            .fl-table th {
+                padding: 20px .625em .625em .625em;
+                height: 60px;
+                vertical-align: middle;
+                box-sizing: border-box;
+                overflow-x: hidden;
+                overflow-y: auto;
+                width: 120px;
+                font-size: 13px;
+            }
+
+
+
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="invoice">
+            <!-- Invoice Top -->
+            <div class="invoice-top">
+                <div class="invoice-header">
+                    <div class="invoice-logo">
+                        <img src="<%=  invoiceData[0].businessLogoUrl %>" alt="Business Logo" class="logo">
+                    </div>
+                    <div class="invoice-details">
+                        <h1 class="invoice-title">INVOICE</h1>
+                        <h3 class="invoice-id">Invoice Id:
+                            <span>
+                                <%= invoiceData[0].invoiceId %>
+                            </span>
+                        </h3>
+                    </div>
+                </div>
+                <div class="invoice-info">
+                    <div class="business-details">
+                        <p class="font-bold">Business Details:</p>
+                        <p class="font-bold">Business Name:
+                            <span>
+                                <%= invoiceData[0].businessName %>
+                            </span>
+                        </p>
+                        <p>+91 <%= invoiceData[0].contactNo %>
+                        </p>
+                    </div>
+                    <div class="invoice-to">
+                        <p class="font-bold">Invoice to:</p>
+                        <p class="font-bold">Consumer Id:
+                            <span>
+                                <%= invoiceData[0].consumerId %>
+                            </span>
+                        </p>
+                        <p>Date: <span>
+                                <%= date %>
+                            </span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="fl-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Discount</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <% invoiceItems.forEach(item=> { %>
+                            <tr>
+                                <td class="table-header-item">
+                                    <%= item.name %>
+                                </td>
+                                <td class="table-header-item">
+                                    <%= item.mrp %>
+                                </td>
+                                <td class="table-header-item">
+                                    <%= item.quantity %>
+                                </td>
+                                <td class="table-header-item">
+                                    <%= (item.mrp * item.quantity) - item.salePrice %>
+                                </td>
+                                <td class="table-header-item">
+                                    <%= item.salePrice %>
+                                </td>
+                            </tr>
+                            <% }); %>
+
+
+
+                    <tbody>
+                </table>
+            </div>
+            <div class="invoice-summary">
+                <div class="validity-info">
+                    <p><b>Return Validity:</b>
+                        <span>
+                            <%= invoiceData[0].returnValidity %>
+                                days
+                        </span>
+                    </p>
+                    <p><b>Exchange Validity:</b>
+                        <span>
+                            <%= invoiceData[0].exchangeValidity %>
+                                days
+                        </span>
+                    </p>
+                </div>
+                <div class="total-info">
+                    <p><b>Sub total:</b> <span> Rs. <%= subTotal %> </span>
+                    </p>
+                    <p><b>Discount:</b> <span>Rs. <%= totalDiscount %></span>
+                    </p>
+                    <p class="total-amount">Total: Rs. <%= invoiceData[0].totalAmount %>
+                    </p>
+                </div>
+            </div>
+
+
+            <!-- Invoice Bottom -->
+            <h2 class="retur">Return and Exchange Policy</h2>
+            <div class="invoice-bottom">
+                <p class="return-policy-text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+                    ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat.
+                </p>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>

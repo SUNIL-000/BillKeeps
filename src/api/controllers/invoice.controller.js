@@ -7,9 +7,55 @@ import {
   Product,
 } from "../../db/models/index.js";
 
+import path, { dirname } from "path"
+import { fileURLToPath } from "url";
+import ejs, { name } from "ejs";
+import puppeteer from "puppeteer";
+
+const generatePng = async ({ invoiceData, invoiceItems }) => {
+  console.log(invoiceData, invoiceItems)
+  const date= new Date().toLocaleDateString()
+  let totalDiscount = 0;
+  let subTotal = 0;
+  
+  invoiceItems.forEach((item) => {
+    const dis = (item.mrp * item.quantity) - item.salePrice
+    const st= (item.mrp * item.quantity) 
+    totalDiscount += dis;
+    subTotal +=st;
+  })
+
+  try {
+    const filepath= fileURLToPath(import.meta.url)
+        console.log("Invoice filepath",filepath)
+
+        const dir = dirname(filepath)
+        console.log("Directory",dir)
+
+        const templatePath = path.join(dir, '../../views/invoice.ejs');
+        console.log("ejs path",templatePath)
+
+        const html = await ejs.renderFile(templatePath, {invoiceData , invoiceItems, totalDiscount, subTotal,date});
+
+        const browser = await puppeteer.launch()
+        const page = await browser.newPage();
+
+        await page.setContent(html, { waitUntil: 'domcontentloaded' });
+        const pngPath = path.join(dir, '../../../uploads/invoices', `${invoiceData[0].invoiceId}.png`);
+
+         const png= await page.screenshot({ path: pngPath, fullPage:true });
+        await browser.close();
+
+        const finalPath = `uploads/Invoices/${invoiceData[0].invoiceId}.png`
+        return finalPath
+  } catch (error) {
+    console.log("Failed to to create invoice image")
+    console.log(error)
+  }
+}
+
 export const newInvoice = async (req, res) => {
-  const { consumerId, items, returnValidity,
-    exchangeValidity } = req.body;
+  const { consumerId, items, returnValidity, exchangeValidity } = req.body;
 
   const merchantId = req.id;
 
@@ -17,6 +63,9 @@ export const newInvoice = async (req, res) => {
   try {
     const invoiceId = generateID("I");
     let totalAmount = 0;
+    let finalItems = [];
+    let invoiceItems = []
+    let invoiceData = []
 
     const isConsumer = await Consumer.findByPk(consumerId)
 
@@ -36,10 +85,11 @@ export const newInvoice = async (req, res) => {
       exchangeValidity
     });
 
-    let finalItems = [];
     for (const data of items) {
 
-      const pdata = await Product.findByPk(data?.productId);
+      const pdata = await Product.findOne({
+        where: { productId: data.productId }
+      });
 
       if (!pdata) {
         await newInvoice.destroy();
@@ -77,10 +127,16 @@ export const newInvoice = async (req, res) => {
         salePrice: finalDiscountPrice,
       })
 
+      invoiceItems.push({
+        name: pdata.name,
+        mrp: pdata.mrp,
+        quantity: data?.quantity,
+        salePrice: finalDiscountPrice,
+      })
     }
     const newInvoiceItem = await InvoiceItem.bulkCreate(finalItems);
 
-    //passing the whole items array
+
 
     if (!newInvoiceItem) {
       await newInvoice.destroy();
@@ -101,6 +157,32 @@ export const newInvoice = async (req, res) => {
       });
     }
 
+    const merchantDets = await Merchant.findOne({
+      where: { merchantId: merchantId },
+      attributes: ["contactNo", "businessLogoUrl", "businessName"]
+    })
+    // console.log(merchantDets)
+
+    invoiceData.push({
+      invoiceId,
+      merchantId,
+      consumerId,
+      totalAmount,
+      returnValidity,
+      exchangeValidity,
+      contactNo: merchantDets.contactNo,
+      businessLogoUrl: merchantDets.businessLogoUrl,
+      businessName: merchantDets.businessName
+    })
+    // console.log(invoiveData);
+    // console.log(invoiceItems)
+
+
+
+
+   const url= await generatePng({ invoiceData, invoiceItems })
+    newInvoice.invoiceUrl=url
+    await newInvoice.save();
 
     return res.status(201).json({
       message: "New Invoice created successfully..",
@@ -137,7 +219,9 @@ export const getAllInvoice = async (req, res) => {
           model: InvoiceItem,
           attributes: {
             exclude: ["createdAt", "updatedAt"],
+
           },
+
         },
       ],
     });

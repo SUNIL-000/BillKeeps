@@ -1,0 +1,142 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 5px;
+    padding-bottom: 10px;
+    padding-left: 2px;
+    padding-right: 2px;
+    overflow-x: hidden;
+}
+
+.invoice {
+    transform: scale(0.75);
+    transform-origin: 0 0;
+    min-width: 500px;
+    width: 100%;
+    max-width: 768px;
+    margin: 0 auto;
+    border: 2px solid #000;
+    padding: 20px;
+    background: #fff;
+}
+
+@media (min-width: 640px) {
+    .invoice {
+        transform: scale(1);
+    }
+}
+
+.invoice-top {
+    border-bottom: 2px solid #463ACC;
+    padding-bottom: 20px;
+}
+
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.invoice-logo {
+    width: 48%;
+}
+
+.logo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid #463ACC;
+}
+
+.invoice-details {
+    width: 48%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.invoice-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #463ACC;
+}
+
+.invoice-id, .invoice-to, .business-details {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.invoice-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.invoice-to, .business-details {
+    width: 48%;
+}
+
+.highlight {
+    color: #463ACC;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.invoice-body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #463ACC;
+}
+
+.invoice-table-header {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    background: #463ACC;
+    color: white;
+    font-weight: bold;
+}
+
+.table-header-item {
+    padding: 10px;
+}
+
+.invoice-summary {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+}
+
+.validity-info, .total-info {
+    flex: 1;
+}
+
+.total-amount {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    background: #463ACC;
+    color: white;
+}
+
+.invoice-bottom {
+    padding-top: 20px;
+}
+
+.return-policy-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.return-policy-text {
+    font-size: 14px;
+    margin-top: 10px;
+}
