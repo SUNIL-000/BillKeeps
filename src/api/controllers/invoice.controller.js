@@ -11,43 +11,44 @@ import path, { dirname } from "path"
 import { fileURLToPath } from "url";
 import ejs, { name } from "ejs";
 import puppeteer from "puppeteer";
+import { Op } from "sequelize";
 
 const generatePng = async ({ invoiceData, invoiceItems }) => {
   console.log(invoiceData, invoiceItems)
-  const date= new Date().toLocaleDateString()
+  const date = new Date().toLocaleDateString()
   let totalDiscount = 0;
   let subTotal = 0;
-  
+
   invoiceItems.forEach((item) => {
     const dis = (item.mrp * item.quantity) - item.salePrice
-    const st= (item.mrp * item.quantity) 
+    const st = (item.mrp * item.quantity)
     totalDiscount += dis;
-    subTotal +=st;
+    subTotal += st;
   })
 
   try {
-    const filepath= fileURLToPath(import.meta.url)
-        console.log("Invoice filepath",filepath)
+    const filepath = fileURLToPath(import.meta.url)
+    console.log("Invoice filepath", filepath)
 
-        const dir = dirname(filepath)
-        console.log("Directory",dir)
+    const dir = dirname(filepath)
+    console.log("Directory", dir)
 
-        const templatePath = path.join(dir, '../../views/invoice.ejs');
-        console.log("ejs path",templatePath)
+    const templatePath = path.join(dir, '../../views/invoice.ejs');
+    console.log("ejs path", templatePath)
 
-        const html = await ejs.renderFile(templatePath, {invoiceData , invoiceItems, totalDiscount, subTotal,date});
+    const html = await ejs.renderFile(templatePath, { invoiceData, invoiceItems, totalDiscount, subTotal, date });
 
-        const browser = await puppeteer.launch()
-        const page = await browser.newPage();
+    const browser = await puppeteer.launch()
+    const page = await browser.newPage();
 
-        await page.setContent(html, { waitUntil: 'domcontentloaded' });
-        const pngPath = path.join(dir, '../../../uploads/invoices', `${invoiceData[0].invoiceId}.png`);
+    await page.setContent(html, { waitUntil: 'domcontentloaded' });
+    const pngPath = path.join(dir, '../../../uploads/invoices', `${invoiceData[0].invoiceId}.png`);
 
-         const png= await page.screenshot({ path: pngPath, fullPage:true });
-        await browser.close();
+    const png = await page.screenshot({ path: pngPath, fullPage: true });
+    await browser.close();
 
-        const finalPath = `uploads/Invoices/${invoiceData[0].invoiceId}.png`
-        return finalPath
+    const finalPath = `uploads/Invoices/${invoiceData[0].invoiceId}.png`
+    return finalPath
   } catch (error) {
     console.log("Failed to to create invoice image")
     console.log(error)
@@ -180,8 +181,8 @@ export const newInvoice = async (req, res) => {
 
 
 
-   const url= await generatePng({ invoiceData, invoiceItems })
-    newInvoice.invoiceUrl=url
+    const url = await generatePng({ invoiceData, invoiceItems })
+    newInvoice.invoiceUrl = url
     await newInvoice.save();
 
     return res.status(201).json({
@@ -473,5 +474,73 @@ export const getSingleInvoiceofAMerchant = async (req, res) => {
       message: "Error while single invoice",
       success: false,
     });
+  }
+}
+
+
+
+export const searchInvoice = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const searchedInvoice = await Invoice.findAll({
+      where: {
+        [Op.or]: [
+          {
+            invoiceId: {
+              [Op.iLike]: `${id.trim()}`
+            },
+
+          },
+          {
+            consumerId: {
+              [Op.iLike]: `${id.trim()}`
+            },
+          }
+        ],
+
+      },
+      include: [
+        {
+          model: InvoiceItem,
+          attributes: { exclude: ["createdAt", "updatedAt", "invoiceId", "productId"] },
+          include: [
+            {
+              model: Product,
+              attributes: { exclude: ["createdAt", "updatedAt", "merchantId"] },
+            },
+          ],
+        },
+        {
+          model: Consumer,
+          attributes: { exclude: ["createdAt", "updatedAt", "password"] },
+        },
+        {
+          model: Merchant,
+          attributes: { exclude: ["createdAt", "updatedAt", "password"] },
+        },
+      ],
+    })
+    console.log(searchedInvoice)
+    if (!searchedInvoice || searchedInvoice.length == 0) {
+      return res.status(400).json({
+        message: `No invoice found with ${id}`,
+        success: false
+      }
+      )
+    }
+    return res.status(200).json({
+      message: `Getting invoice having ${id}`,
+      success: true,
+      searchedInvoice
+    }
+    )
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({
+      message: "Error while searching invoice details",
+      success: false,
+    }
+    )
   }
 }

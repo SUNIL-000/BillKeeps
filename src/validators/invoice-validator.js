@@ -49,3 +49,11 @@ export const singleInvoiceValidation = z.object({
     })
 
 });
+
+export const searchInvoiceValidation = z.object({
+    params: z.object({
+        id: z.string({ required_error: "invoiceId required" })
+            .length(10, { message: "Id must be of 10 charecters" }),
+    })
+
+});

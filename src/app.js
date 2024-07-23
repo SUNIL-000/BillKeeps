@@ -9,9 +9,11 @@ import { dirname } from "path";
 import { merchantRoutes } from "./api/routes/merchant.route.js";
 import { consumerRouter } from "./api/routes/consumer.route.js";
 import { productRoutes } from "./api/routes/product.route.js";
-import { invoice } from "./api/routes/invoice.route.js";
 import { invoiceItem } from "./api/routes/invoice_item.route.js";
 import { sequelize } from "./config/db.js";
+import { invoiceRouter } from "./api/routes/invoice.route.js";
+import { otpRouter } from "./api/routes/otp.route.js";
+
 
 dotenv.config({
   path: ".env",
@@ -40,8 +42,6 @@ app.use(cors({
 ));
 const filename = fileURLToPath(import.meta.url)
 const dir = dirname(filename)
-console.log(filename);
-console.log(dir)
 app.set("views", path.join(dir, "views"))
 
 
@@ -53,11 +53,9 @@ app.get("/api/v1", (req, res) => res.send("API v1 base point"));
 app.use("/api/v1/merchant", merchantRoutes);
 app.use("/api/v1/consumer", consumerRouter);
 app.use("/api/v1/product", productRoutes);
-app.use("/api/v1/invoice", invoice);
+app.use("/api/v1/invoice", invoiceRouter);
 app.use("/api/v1/invoice-item", invoiceItem);
-
-
-
+app.use("/api/v1/otp", otpRouter);
 
 
 // connect to the server and database
