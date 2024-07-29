@@ -13,7 +13,6 @@ export const verifyOtpValidation = z.object({
 })
 
 
-
 export const deleteOtpValidation = z.object({
     params: z.object({
 

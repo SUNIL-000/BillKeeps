@@ -1,4 +1,6 @@
-const errorResponse = (msg) => {
+
+
+export const errorResponse = (msg) => {
   const response = {
     errors: [
       {
@@ -10,7 +12,7 @@ const errorResponse = (msg) => {
   return response;
 };
 
-const successResponse = (message) => {
+export const successResponse = (message) => {
   const response = {
     message,
   };
@@ -18,4 +20,3 @@ const successResponse = (message) => {
   return response;
 };
 
-module.exports = { errorResponse, successResponse };

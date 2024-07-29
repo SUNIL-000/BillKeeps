@@ -13,6 +13,7 @@ import { invoiceItem } from "./api/routes/invoice_item.route.js";
 import { sequelize } from "./config/db.js";
 import { invoiceRouter } from "./api/routes/invoice.route.js";
 import { otpRouter } from "./api/routes/otp.route.js";
+import { config } from "./config/env.js";
 
 
 dotenv.config({
@@ -58,9 +59,10 @@ app.use("/api/v1/invoice-item", invoiceItem);
 app.use("/api/v1/otp", otpRouter);
 
 
+
 // connect to the server and database
 app.listen(process.env.PORT, async () => {
-  console.log(`Server running on http://localhost:${process.env.PORT}`);
+  console.log(`Server running on http://localhost:${config.server.port}`);
   try {
     await sequelize.authenticate();
     console.log("Connected to the database.");

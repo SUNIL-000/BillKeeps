@@ -1,4 +1,5 @@
 import { Consumer, Otp } from "../../db/models/index.js";
+import { generateID } from "../../utils/generateID.js";
 
 
 export const generateOtp = async (req, res) => {
@@ -22,7 +23,7 @@ export const generateOtp = async (req, res) => {
             newOtp.code = code;
             await newOtp.save();
         } else {
-            newOtp = await Otp.create({ consumerId, code })
+            newOtp = await Otp.create({ otpId:generateID("O"),consumerId, code })
         }
 
 
@@ -44,7 +45,6 @@ export const generateOtp = async (req, res) => {
 export const verifyOtp = async (req, res) => {
     const { consumerId, otp } = req.body;
     try {
-
         //verify consumer 
         const isConsumer = await Consumer.findOne({ where: { consumerId } })
 
@@ -111,3 +111,5 @@ export const deleteOtp = async (req, res) => {
         })
     }
 }
+
+

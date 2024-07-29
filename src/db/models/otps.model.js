@@ -5,8 +5,7 @@ import { sequelize } from "../../config/db.js"
 export const Otp = sequelize.define("otp", {
 
     otpId: {
-        type: DataTypes.UUIDV4,
-        defaultValue: DataTypes.UUIDV4,
+        type: DataTypes.STRING,
         allowNull: false,
         primaryKey:true
     },
