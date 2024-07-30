@@ -58,7 +58,6 @@ app.use("/api/v1/otp", otpRouter);
 // const date = new Date();
 // const fdate = date.getTime() + 5000;
 // const newd = new Date(fdate);
-
 // console.log(newd - date);
 
 // Connect to the server and database
