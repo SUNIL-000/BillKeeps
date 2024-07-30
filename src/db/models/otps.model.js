@@ -7,7 +7,7 @@ export const Otp = sequelize.define("otp", {
     otpId: {
         type: DataTypes.STRING,
         allowNull: false,
-        primaryKey:true
+        primaryKey: true
     },
     code: {
         type: DataTypes.INTEGER,
@@ -19,8 +19,8 @@ export const Otp = sequelize.define("otp", {
         allowNull: false
     },
     expiry: {
-        type: DataTypes.STRING,
-        defaultValue: "60s"
+        type: DataTypes.DOUBLE,
+        allowNull:false
     }
 }
     , {

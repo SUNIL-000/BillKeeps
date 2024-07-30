@@ -4,28 +4,35 @@ import { generateID } from "../../utils/generateID.js";
 
 export const generateOtp = async (req, res) => {
     const consumerId = req.id;
-
+    //for otp
     var code = Math.floor(Math.random() * 10000);
     code = code < 1000 ? code += 1000 : code
 
-    try {
-        const isConsumer = await Consumer.findOne({ where: { consumerId } })
+    //For expiry
+    const date = new Date()
+    const milisecond = date.getTime();
 
-        if (!isConsumer) {
-            return res.status(400).json({
-                message: "Not a valid consumer",
-                success: false
-            })
-        }
+
+    try {
+
+
         let newOtp = await Otp.findOne({ where: { consumerId } })
 
         if (newOtp) {
             newOtp.code = code;
+            newOtp.expiry = milisecond
             await newOtp.save();
+
         } else {
-            newOtp = await Otp.create({ otpId:generateID("O"),consumerId, code })
+            newOtp = await Otp.create({
+                otpId: generateID("O"),
+                consumerId,
+                code,
+                expiry: milisecond
+            })
         }
 
+        setTimeout(autoDeleteOtp(consumerId), 60000)
 
         return res.status(201).json({
             message: "otp generated successfully",
@@ -45,7 +52,11 @@ export const generateOtp = async (req, res) => {
 export const verifyOtp = async (req, res) => {
     const { consumerId, otp } = req.body;
     try {
-        //verify consumer 
+
+        const date = new Date();
+        const getMilisecond = date.getTime();
+
+        // verify consumer 
         const isConsumer = await Consumer.findOne({ where: { consumerId } })
 
         if (!isConsumer) {
@@ -59,17 +70,24 @@ export const verifyOtp = async (req, res) => {
         const existOtp = await Otp.findOne({
             where: { consumerId }
         })
-
-        if (existOtp.code != otp) {
+        if (!existOtp || (getMilisecond - existOtp.expiry) > 60000) {
             return res.status(400).json({
-                message: "Wrong otp ",
+                message: "OTP expired ",
                 success: false
             })
         }
 
+        if (existOtp.code != otp) {
+            return res.status(400).json({
+                message: "Wrong OTP ",
+                success: false
+            })
+        }
+        console.log()
         return res.status(200).json({
             message: "otp verified successfully",
             success: true,
+            value: getMilisecond - existOtp.expiry
 
         })
     } catch (error) {
@@ -109,6 +127,19 @@ export const deleteOtp = async (req, res) => {
             message: "Error while verifying otp",
             success: false
         })
+    }
+}
+
+
+const autoDeleteOtp = (consumerId) => async (req, res) => {
+    try {
+        const deletOtp = await Otp.destroy({ where: { consumerId } })
+
+
+        console.log("OTP deleted successfully")
+    } catch (error) {
+        console.log(error)
+
     }
 }
 
