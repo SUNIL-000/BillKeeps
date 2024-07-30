@@ -122,7 +122,7 @@ export const getOtp = async (req, res) => {
         return res.status(200).json({
             message: "Otp found",
             success: true,
-            code: existOtp.code
+            existOtp
         })
 
     } catch (error) {
