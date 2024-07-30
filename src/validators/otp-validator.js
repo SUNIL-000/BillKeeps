@@ -20,3 +20,10 @@ export const deleteOtpValidation = z.object({
             .length(10, { message: "consumerId must be of 10 letters" }),
     })
 })
+export const getOtpValidation = z.object({
+    params: z.object({
+
+        consumerId: z.string({ required_error: "consumerId required" })
+            .length(10, { message: "consumerId must be of 10 letters" }),
+    })
+})

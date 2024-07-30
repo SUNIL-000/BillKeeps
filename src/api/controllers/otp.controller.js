@@ -99,6 +99,36 @@ export const verifyOtp = async (req, res) => {
     }
 }
 
+export const getOtp = async (req, res) => {
+    const { consumerId } = req.params
+    try {
+        const isConsumer = await Consumer.findOne({ where: { consumerId } })
+        if (!isConsumer) {
+            return res.status(400).json({
+                message: "Not a valid consumer",
+                success: false
+            })
+        }
+        const existOtp = await Otp.findOne({
+            where: { consumerId }
+        })
+
+        if (!existOtp) {
+            return res.status(400).json({
+                message: "Otp expired",
+                success: false
+            })
+        }
+        return res.status(200).json({
+            message: "Otp found",
+            success: true,
+            code: existOtp.code
+        })
+
+    } catch (error) {
+
+    }
+}
 export const deleteOtp = async (req, res) => {
     const { consumerId } = req.params;
     try {
