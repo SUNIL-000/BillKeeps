@@ -9,7 +9,7 @@ import {
 
 import path, { dirname } from "path"
 import { fileURLToPath } from "url";
-import ejs, { name } from "ejs";
+import ejs from "ejs";
 import puppeteer from "puppeteer";
 import { Op } from "sequelize";
 
@@ -372,8 +372,6 @@ export const getInvoiceOfMerchant = async (req, res) => {
   }
 };
 
-
-
 //get single invoice of a consumer
 export const getSingleInvoiceofAConsumer = async (req, res) => {
   const { invoiceId } = req.params;
@@ -425,8 +423,6 @@ export const getSingleInvoiceofAConsumer = async (req, res) => {
   }
 }
 
-
-
 export const getSingleInvoiceofAMerchant = async (req, res) => {
   const { invoiceId } = req.params;
   try {
@@ -476,8 +472,6 @@ export const getSingleInvoiceofAMerchant = async (req, res) => {
     });
   }
 }
-
-
 
 export const searchInvoice = async (req, res) => {
   const { id } = req.params;
@@ -544,3 +538,56 @@ export const searchInvoice = async (req, res) => {
     )
   }
 }
+export const countInvoices = async (req, res) => {
+  try {
+    const invoiceCount = await Invoice.count()
+
+    return res.status(200).json({
+      message: "getting no of inovice record",
+      success: true,
+      invoiceCount
+    })
+
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({
+      message: "Error while fetching total no of invoice ",
+      success: false,
+    })
+  }
+
+}
+
+///Net Revenue
+export const netRevenue = async (req, res) => {
+  try {
+    const allInvoice = await Invoice.findAll({})
+    let totalRevenue = 0;
+    if (!allInvoice) {
+      return res.status(400).json({
+        message: "Failed to get net revenue",
+        success: false,
+      })
+    }
+
+    for (const data of allInvoice) {
+      totalRevenue += data.totalAmount
+    }
+
+    return res.status(200).json({
+      message: "getting net revenue",
+      success: true,
+      totalRevenue
+    })
+
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({
+      message: "Error while getting net revenue ",
+      success: false,
+    })
+  }
+
+}
+
+

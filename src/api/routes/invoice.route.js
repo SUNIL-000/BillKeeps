@@ -1,10 +1,9 @@
 import express from "express";
-import {  deletSingleInvoice, getAllInvoice, getInvoiceOfConsumer, getInvoiceOfMerchant,  getSingleInvoiceofAConsumer, getSingleInvoiceofAMerchant, newInvoice, searchInvoice } from "../controllers/invoice.controller.js";
+import {  countInvoices, deletSingleInvoice, getAllInvoice, getInvoiceOfConsumer, getInvoiceOfMerchant,  getSingleInvoiceofAConsumer, getSingleInvoiceofAMerchant, netRevenue, newInvoice,  searchInvoice } from "../controllers/invoice.controller.js";
 import { isMerchant } from "../middleware/merchantMiddleware.js";
 import { bodyValidator } from "../middleware/Zod.js";
 import { invoiceValidation, searchInvoiceValidation, singleInvoiceValidation } from "../../validators/invoice-validator.js";
 import { isConsumer } from "../middleware/consumerMiddleware.js";
-import { searchProduct } from "../controllers/product.controller.js";
 
 export const invoiceRouter=express.Router();
 
@@ -20,6 +19,9 @@ invoiceRouter.get("/single/merchant/:invoiceId",isMerchant,bodyValidator(singleI
 
 
 invoiceRouter.get("/search/:id",bodyValidator(searchInvoiceValidation),searchInvoice)
+invoiceRouter.get("/count",countInvoices)
+
+invoiceRouter.get("/revenue",netRevenue)
 
 //ignore this routes(Testing Purpose)
 invoiceRouter.delete("/:invoiceId",deletSingleInvoice)

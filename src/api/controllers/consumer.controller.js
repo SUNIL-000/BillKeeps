@@ -128,7 +128,23 @@ export const consumerDetails = async (req, res) => {
     });
   }
 };
+//no of consumers
+export const totalConsumer = async (req, res) => {
+  try {
+    const totalConsumer = await Consumer.count();
 
+   
+    return res.status(200).json({
+      message: "Getting total no of consumer",
+      totalConsumer,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error while fetching total no of consumers",
+      success: false,
+    });
+  }
+};
 // Get all consumers
 export const getAllConsumer = async (req, res) => {
   try {
