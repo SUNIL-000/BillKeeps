@@ -114,7 +114,7 @@ export const consumerDetails = async (req, res) => {
         message: "No consumer found",
         success: false,
       });
-    }  
+    }
 
     return res.status(200).json({
       message: "Getting consumer details",
@@ -133,9 +133,10 @@ export const totalConsumer = async (req, res) => {
   try {
     const totalConsumer = await Consumer.count();
 
-   
+
     return res.status(200).json({
       message: "Getting total no of consumer",
+      success: true,
       totalConsumer,
     });
   } catch (error) {
