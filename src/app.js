@@ -55,10 +55,6 @@ app.use("/api/v1/invoice", invoiceRouter);
 app.use("/api/v1/invoice-item", invoiceItem);
 app.use("/api/v1/otp", otpRouter);
 
-// const date = new Date();
-// const fdate = date.getTime() + 5000;
-// const newd = new Date(fdate);
-// console.log(newd - date);
 
 // Connect to the server and database
 app.listen(config.server.port, async () => {

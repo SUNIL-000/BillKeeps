@@ -1,5 +1,4 @@
 import { Sequelize, DataTypes } from "sequelize";
-
 import { sequelize } from "../../config/db.js";
 
 export const InvoiceItem = sequelize.define(
@@ -23,7 +22,7 @@ export const InvoiceItem = sequelize.define(
       allowNull: false,
       defaultValue: 1,
     },
-    discountAmout: {
+    discountAmount: { 
       type: DataTypes.DOUBLE,
     },
     discountPercent: {

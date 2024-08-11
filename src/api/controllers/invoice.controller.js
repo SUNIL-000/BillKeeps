@@ -11,7 +11,8 @@ import path, { dirname } from "path"
 import { fileURLToPath } from "url";
 import ejs from "ejs";
 import puppeteer from "puppeteer";
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
+import { sequelize } from "../../config/db.js";
 
 const generatePng = async ({ invoiceData, invoiceItems }) => {
   console.log(invoiceData, invoiceItems)
@@ -571,7 +572,7 @@ export const netRevenue = async (req, res) => {
     }
 
     for (const data of allInvoice) {
-      totalRevenue += data.totalAmount
+      totalRevenue += data?.totalAmount
     }
 
     return res.status(200).json({
@@ -589,5 +590,56 @@ export const netRevenue = async (req, res) => {
   }
 
 }
+
+
+export const getTop3Products = async (req, res) => {
+  const { merchantId } = req.params
+  try {
+    const results = await InvoiceItem.findAll({
+      attributes: [
+        
+        [sequelize.fn('SUM', sequelize.col('quantity')), 'product_freq'],
+        [sequelize.col('product.productId'), 'product.productId'],
+        [sequelize.col('product.name'), 'product.name']
+      ],
+      include: [
+        {
+          model: Invoice,
+          attributes: [], 
+          where: {
+            merchantId: merchantId
+          }
+        },
+        {
+          model: Product,
+          attributes: ['productId', 'name'] 
+        }
+      ],
+      group: ['invoice_item.productId', 'product.productId', 'product.name'],
+      order: [[sequelize.col('product_freq'), 'DESC']],
+      limit: 3
+    });
+
+    const products= (results.map(result => result.get({ plain: true })));
+    console.log(products)
+
+    return res.status(200).json({
+      message:"Getting top 3 products",
+      success:true,
+      products
+
+    })
+  } catch (error) {
+    console.error('Error executing query:', error);
+    return res.status(500).json({
+      message:"Error occour while getting top 3 products",
+      success:false,
+      
+
+    })
+  }
+};
+
+
 
 

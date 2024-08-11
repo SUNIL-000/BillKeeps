@@ -24,18 +24,25 @@ export const merchantSignupValidation = z.object({
       .max(100, { message: "businessType must be at most 100 characters" })
       .optional(),
 
-    
+
   })
 
 });
 
 export const merchantSignInValidation = z.object({
   body: z.object({
-  contactNo: z
-    .string({ required_error: "contactNo must be required" })
-    .length(10, { message: "contactNo must be exactly 10 digits" }),
-  password: z
-    .string({ required_error: "password must be required" })
-    .min(1, { message: "Please enter your password" }),
+    contactNo: z
+      .string({ required_error: "contactNo must be required" })
+      .length(10, { message: "contactNo must be exactly 10 digits" }),
+    password: z
+      .string({ required_error: "password must be required" })
+      .min(1, { message: "Please enter your password" }),
+  })
+});
+export const merchantTopProductValidation = z.object({
+  params: z.object({
+
+    merchantId: z.string({ required_error: "merchantId required" })
+      .length(10, { message: "merchantId must be of 10 letters" }),
   })
 });
