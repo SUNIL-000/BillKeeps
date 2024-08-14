@@ -14,47 +14,47 @@ import puppeteer from "puppeteer";
 import { Op, Sequelize } from "sequelize";
 import { sequelize } from "../../config/db.js";
 
-const generatePng = async ({ invoiceData, invoiceItems }) => {
-  console.log(invoiceData, invoiceItems)
-  const date = new Date().toLocaleDateString()
-  let totalDiscount = 0;
-  let subTotal = 0;
+// const generatePng = async ({ invoiceData, invoiceItems }) => {
+//   console.log(invoiceData, invoiceItems)
+//   const date = new Date().toLocaleDateString()
+//   let totalDiscount = 0;
+//   let subTotal = 0;
 
-  invoiceItems.forEach((item) => {
-    const dis = (item.mrp * item.quantity) - item.salePrice
-    const st = (item.mrp * item.quantity)
-    totalDiscount += dis;
-    subTotal += st;
-  })
+//   invoiceItems.forEach((item) => {
+//     const dis = (item.mrp * item.quantity) - item.salePrice
+//     const st = (item.mrp * item.quantity)
+//     totalDiscount += dis;
+//     subTotal += st;
+//   })
 
-  try {
-    const filepath = fileURLToPath(import.meta.url)
-    console.log("Invoice filepath", filepath)
+//   try {
+//     const filepath = fileURLToPath(import.meta.url)
+//     console.log("Invoice filepath", filepath)
 
-    const dir = dirname(filepath)
-    console.log("Directory", dir)
+//     const dir = dirname(filepath)
+//     console.log("Directory", dir)
 
-    const templatePath = path.join(dir, '../../views/invoice.ejs');
-    console.log("ejs path", templatePath)
+//     const templatePath = path.join(dir, '../../views/invoice.ejs');
+//     console.log("ejs path", templatePath)
 
-    const html = await ejs.renderFile(templatePath, { invoiceData, invoiceItems, totalDiscount, subTotal, date });
+//     const html = await ejs.renderFile(templatePath, { invoiceData, invoiceItems, totalDiscount, subTotal, date });
 
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage();
+//     const browser = await puppeteer.launch()
+//     const page = await browser.newPage();
 
-    await page.setContent(html, { waitUntil: 'domcontentloaded' });
-    const pngPath = path.join(dir, '../../../uploads/invoices', `${invoiceData[0].invoiceId}.png`);
+//     await page.setContent(html, { waitUntil: 'domcontentloaded' });
+//     const pngPath = path.join(dir, '../../../uploads/invoices', `${invoiceData[0].invoiceId}.png`);
 
-    const png = await page.screenshot({ path: pngPath, fullPage: true });
-    await browser.close();
+//     const png = await page.screenshot({ path: pngPath, fullPage: true });
+//     await browser.close();
 
-    const finalPath = `uploads/Invoices/${invoiceData[0].invoiceId}.png`
-    return finalPath
-  } catch (error) {
-    console.log("Failed to to create invoice image")
-    console.log(error)
-  }
-}
+//     const finalPath = `uploads/Invoices/${invoiceData[0].invoiceId}.png`
+//     return finalPath
+//   } catch (error) {
+//     console.log("Failed to to create invoice image")
+//     console.log(error)
+//   }
+// }
 
 export const newInvoice = async (req, res) => {
   const { consumerId, items, returnValidity, exchangeValidity } = req.body;
@@ -176,14 +176,9 @@ export const newInvoice = async (req, res) => {
       businessLogoUrl: merchantDets.businessLogoUrl,
       businessName: merchantDets.businessName
     })
-    // console.log(invoiveData);
-    // console.log(invoiceItems)
-
-
-
-
-    const url = await generatePng({ invoiceData, invoiceItems })
-    newInvoice.invoiceUrl = url
+    
+    // const url = await generatePng({ invoiceData, invoiceItems })
+    newInvoice.invoiceUrl = ""
     await newInvoice.save();
 
     return res.status(201).json({
@@ -540,11 +535,14 @@ export const searchInvoice = async (req, res) => {
   }
 }
 export const countInvoices = async (req, res) => {
+  const {merchantId} = req.params
   try {
-    const invoiceCount = await Invoice.count()
+    const invoiceCount = await Invoice.count({
+      where:{merchantId}
+    })
 
     return res.status(200).json({
-      message: "getting no of inovice record",
+      message: `getting ${invoiceCount} inovices`,
       success: true,
       invoiceCount
     })
@@ -561,8 +559,12 @@ export const countInvoices = async (req, res) => {
 
 ///Net Revenue
 export const netRevenue = async (req, res) => {
+  const {merchantId} = req.params
+
   try {
-    const allInvoice = await Invoice.findAll({})
+    const allInvoice = await Invoice.findAll({
+      where:{merchantId}
+    })
     let totalRevenue = 0;
     if (!allInvoice) {
       return res.status(400).json({

@@ -17,11 +17,10 @@ invoiceRouter.get("/all/merchant",isMerchant,getInvoiceOfMerchant)
 invoiceRouter.get("/single/consumer/:invoiceId",isConsumer,bodyValidator(singleInvoiceValidation),getSingleInvoiceofAConsumer)
 invoiceRouter.get("/single/merchant/:invoiceId",isMerchant,bodyValidator(singleInvoiceValidation),getSingleInvoiceofAMerchant)
 
-
 invoiceRouter.get("/search/:id",bodyValidator(searchInvoiceValidation),searchInvoice)
-invoiceRouter.get("/count",countInvoices)
+invoiceRouter.get("/count/:merchantId",countInvoices)
 
-invoiceRouter.get("/revenue",netRevenue)
+invoiceRouter.get("/revenue/:merchantId",netRevenue)
 
 //ignore this routes(Testing Purpose)
 invoiceRouter.delete("/:invoiceId",deletSingleInvoice)

@@ -29,7 +29,6 @@ app.set("view engine", "ejs");
 
 app.use(morgan("dev"));
 
-
 // Static folder
 app.use("/uploads", express.static("uploads"));
 app.use("/public", express.static("public"));
@@ -55,9 +54,8 @@ app.use("/api/v1/invoice", invoiceRouter);
 app.use("/api/v1/invoice-item", invoiceItem);
 app.use("/api/v1/otp", otpRouter);
 
-
 // Connect to the server and database
-app.listen(config.server.port, async () => {
+app.listen(config?.server?.port, async () => {
   console.log(`Server running on http://localhost:${config.server.port}`);
   try {
     await sequelize.authenticate();
