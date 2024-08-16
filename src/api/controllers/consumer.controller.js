@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { Consumer } from "../../db/models/index.js";
+import { Consumer, Invoice, Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
 
 export const createNewConsumer = async (req, res) => {
@@ -130,9 +130,22 @@ export const consumerDetails = async (req, res) => {
 };
 //no of consumers
 export const totalConsumer = async (req, res) => {
+  const { merchantId } = req.params
   try {
-    const totalConsumer = await Consumer.count();
+    const ismerchant = await Merchant.findByPk(merchantId);
 
+    if (!ismerchant) {
+      return res.status(400).json({
+        message: "Wrong merchantId",
+        success: false,
+
+      });
+    }
+    const totalConsumer = await Invoice.count({
+      where: { merchantId },
+      distinct: true,
+      col: 'consumerId'
+    });
 
     return res.status(200).json({
       message: "Getting total no of consumer",
@@ -140,6 +153,8 @@ export const totalConsumer = async (req, res) => {
       totalConsumer,
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       message: "Error while fetching total no of consumers",
       success: false,

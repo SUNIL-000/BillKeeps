@@ -26,3 +26,9 @@ export const UserSignInValidation = z.object({
 
   })
 });
+export const totalconsumerValidation = z.object({
+  params: z.object({
+    merchantId: z.string({ required_error: "merchantId required" })
+        .length(10, { message: "merchantId must be of 10 charecters" }),
+})
+});

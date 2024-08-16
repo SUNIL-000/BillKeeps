@@ -13,6 +13,7 @@ import { sequelize } from "./config/db.js";
 import { invoiceRouter } from "./api/routes/invoice.route.js";
 import { otpRouter } from "./api/routes/otp.route.js";
 import { config } from "./config/env.js";
+import { feedbackroutes } from "./api/routes/feedback.route.js";
 
 dotenv.config({
   path: ".env",
@@ -53,6 +54,7 @@ app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/invoice", invoiceRouter);
 app.use("/api/v1/invoice-item", invoiceItem);
 app.use("/api/v1/otp", otpRouter);
+app.use("/api/v1/feedback", feedbackroutes);
 
 // Connect to the server and database
 app.listen(config?.server?.port, async () => {

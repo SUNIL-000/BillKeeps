@@ -7,12 +7,13 @@ import {
   Product,
 } from "../../db/models/index.js";
 
-import path, { dirname } from "path"
-import { fileURLToPath } from "url";
-import ejs from "ejs";
-import puppeteer from "puppeteer";
+// import path, { dirname } from "path"
+// import { fileURLToPath } from "url";
+// import ejs from "ejs";
+// import puppeteer from "puppeteer";
 import { Op, Sequelize } from "sequelize";
 import { sequelize } from "../../config/db.js";
+import { Feedback } from "../../db/models/feedback.model.js";
 
 // const generatePng = async ({ invoiceData, invoiceItems }) => {
 //   console.log(invoiceData, invoiceItems)
@@ -55,13 +56,29 @@ import { sequelize } from "../../config/db.js";
 //     console.log(error)
 //   }
 // }
+const generateFeedback = async (invoiceId) => {
+  try {
+    const feedbackId = generateID("F")
+    const newFeedback = await Feedback.create({
+      feedbackId,
+      invoiceId,
+      rating: 0,
+      comment: ""
 
+    })
+    if (!newFeedback) {
+      console.log(`Failed to create feedback on invoiceId ${invoiceId}`)
+    }
+    console.log(newFeedback);
+    
+  } catch (error) {
+    console.log(error);
+
+  }
+}
 export const newInvoice = async (req, res) => {
   const { consumerId, items, returnValidity, exchangeValidity } = req.body;
-
   const merchantId = req.id;
-
-
   try {
     const invoiceId = generateID("I");
     let totalAmount = 0;
@@ -77,7 +94,6 @@ export const newInvoice = async (req, res) => {
         success: false,
       });
     }
-
     //creating new Invoices
     const newInvoice = await Invoice.create({
       invoiceId,
@@ -176,10 +192,11 @@ export const newInvoice = async (req, res) => {
       businessLogoUrl: merchantDets.businessLogoUrl,
       businessName: merchantDets.businessName
     })
-    
+
     // const url = await generatePng({ invoiceData, invoiceItems })
     newInvoice.invoiceUrl = ""
     await newInvoice.save();
+    generateFeedback(invoiceId)
 
     return res.status(201).json({
       message: "New Invoice created successfully..",
@@ -535,10 +552,10 @@ export const searchInvoice = async (req, res) => {
   }
 }
 export const countInvoices = async (req, res) => {
-  const {merchantId} = req.params
+  const { merchantId } = req.params
   try {
     const invoiceCount = await Invoice.count({
-      where:{merchantId}
+      where: { merchantId }
     })
 
     return res.status(200).json({
@@ -556,14 +573,14 @@ export const countInvoices = async (req, res) => {
   }
 
 }
-
+// 
 ///Net Revenue
 export const netRevenue = async (req, res) => {
-  const {merchantId} = req.params
+  const { merchantId } = req.params
 
   try {
     const allInvoice = await Invoice.findAll({
-      where:{merchantId}
+      where: { merchantId }
     })
     let totalRevenue = 0;
     if (!allInvoice) {
@@ -599,7 +616,7 @@ export const getTop3Products = async (req, res) => {
   try {
     const results = await InvoiceItem.findAll({
       attributes: [
-        
+
         [sequelize.fn('SUM', sequelize.col('quantity')), 'product_freq'],
         [sequelize.col('product.productId'), 'product.productId'],
         [sequelize.col('product.name'), 'product.name']
@@ -607,14 +624,14 @@ export const getTop3Products = async (req, res) => {
       include: [
         {
           model: Invoice,
-          attributes: [], 
+          attributes: [],
           where: {
             merchantId: merchantId
           }
         },
         {
           model: Product,
-          attributes: ['productId', 'name'] 
+          attributes: ['productId', 'name']
         }
       ],
       group: ['invoice_item.productId', 'product.productId', 'product.name'],
@@ -622,21 +639,21 @@ export const getTop3Products = async (req, res) => {
       limit: 3
     });
 
-    const products= (results.map(result => result.get({ plain: true })));
+    const products = (results.map(result => result.get({ plain: true })));
     console.log(products)
 
     return res.status(200).json({
-      message:"Getting top 3 products",
-      success:true,
+      message: "Getting top 3 products",
+      success: true,
       products
 
     })
   } catch (error) {
     console.error('Error executing query:', error);
     return res.status(500).json({
-      message:"Error occour while getting top 3 products",
-      success:false,
-      
+      message: "Error occour while getting top 3 products",
+      success: false,
+
 
     })
   }
