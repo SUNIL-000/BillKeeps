@@ -11,9 +11,9 @@ import {
 // import { fileURLToPath } from "url";
 // import ejs from "ejs";
 // import puppeteer from "puppeteer";
-import { Op, Sequelize } from "sequelize";
+import { Op } from "sequelize";
 import { sequelize } from "../../config/db.js";
-import { Feedback } from "../../db/models/feedback.model.js";
+import { Feedback } from "../../db/models/index.js";
 
 // const generatePng = async ({ invoiceData, invoiceItems }) => {
 //   console.log(invoiceData, invoiceItems)
