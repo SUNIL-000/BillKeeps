@@ -30,7 +30,18 @@ export const updateFeedBack = async (req, res) => {
 export const getFeedback = async (req, res) => {
     const { invoiceId } = req.params
     try {
-        const data = await Feedback.findOne({ where: { invoiceId } })
+        const invoiceExist = await Invoice.findByPk(invoiceId)
+        if (!invoiceExist) {
+            return res.status(400).json({
+                message: "Wrong invoiceId ",
+                success: false
+            })
+        }
+        const data = await Feedback.findOne({
+            where: { invoiceId }, attributes: {
+                exclude: ['createdAt', 'updatedAt', 'invoiceId']
+            }
+        })
 
         return res.status(200).json({
             data
