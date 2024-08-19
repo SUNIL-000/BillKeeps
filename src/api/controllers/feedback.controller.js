@@ -1,4 +1,5 @@
-import { Feedback, Invoice } from "../../db/models/index.js";
+import { where } from "sequelize";
+import { Feedback, Invoice, Merchant } from "../../db/models/index.js";
 
 export const updateFeedBack = async (req, res) => {
     const { rating, comment } = req.body
@@ -48,6 +49,79 @@ export const getFeedback = async (req, res) => {
         })
     } catch (error) {
         console.log(error);
+
+    }
+}
+
+export const getAvgFeedback = async (req, res) => {
+    const merchantId = req.id
+    try {
+        const invoiceExist = await Invoice.findAndCountAll({ where: { merchantId } })
+        if (!invoiceExist) {
+            return res.status(400).json({
+                message: "Invoice not found.",
+                success: false
+            })
+        }
+        const feedbacks = await Feedback.findAll({
+            attributes: ['rating'],
+            include: {
+                model: Invoice,
+                attributes: [],
+                where: { merchantId }
+            }
+        });
+        const ratings = feedbacks.map(item => item.rating);
+        const avgRating = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
+        return res.status(200).json({
+            avgRating,
+        })
+    } catch (error) {
+        return res.status(400).json({
+            message: "Error while searching avg feedback of a merchant",
+            success: false
+
+        })
+
+    }
+}
+
+export const getAllFeedback = async (req, res) => {
+    const merchantId = req.id
+    try {
+        const invoiceExist = await Invoice.findAndCountAll({ where: { merchantId } })
+        if (!invoiceExist) {
+            return res.status(404).json({
+                message: "Invoice not found.",
+                success: false
+            })
+        }
+        const feedbacks = await Feedback.findAll({
+            
+            include: {
+                model: Invoice,
+                attributes: [],
+                where: { merchantId }
+            }
+        });
+        if (!feedbacks) {
+            return res.status(404).json({
+                message: "No feedback found.",
+                success: false
+            })
+        }
+
+        return res.status(200).json({
+            message: "Getting all feedbacks",
+            success: true,
+            feedbacks,
+        })
+    } catch (error) {
+        return res.status(400).json({
+            message: "Error while searching all feedback of a merchant",
+            success: false
+
+        })
 
     }
 }
