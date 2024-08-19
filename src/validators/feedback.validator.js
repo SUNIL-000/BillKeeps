@@ -6,8 +6,7 @@ export const updatefeedbackValidation = z.object({
     rating: z
       .number({ required_error: "rating required" })
       .gt(0, { message: "rating should be greate than 0 " })
-      .lt(6, { message: "rating should be between 1-5 " }),
-
+      .lt(6, { message: "rating should be between 1-5 " }).optional(),
     comment: z
       .string({ required_error: "comment required" })
       .optional(),
