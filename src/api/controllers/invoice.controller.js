@@ -56,12 +56,13 @@ import { Feedback } from "../../db/models/index.js";
 //     console.log(error)
 //   }
 // }
-const generateFeedback = async (invoiceId) => {
+const generateFeedback = async ({ invoiceId, consumerId }) => {
   try {
     const feedbackId = generateID("F")
     const newFeedback = await Feedback.create({
       feedbackId,
       invoiceId,
+      consumerId,
       rating: 0,
       comment: ""
 
@@ -70,7 +71,7 @@ const generateFeedback = async (invoiceId) => {
       console.log(`Failed to create feedback on invoiceId ${invoiceId}`)
     }
     console.log(newFeedback);
-    
+
   } catch (error) {
     console.log(error);
 
@@ -196,7 +197,7 @@ export const newInvoice = async (req, res) => {
     // const url = await generatePng({ invoiceData, invoiceItems })
     newInvoice.invoiceUrl = ""
     await newInvoice.save();
-    generateFeedback(invoiceId)
+    generateFeedback({ invoiceId, consumerId })
 
     return res.status(201).json({
       message: "New Invoice created successfully..",

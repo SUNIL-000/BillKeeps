@@ -1,9 +1,10 @@
-import { where } from "sequelize";
+
 import { Feedback, Invoice, Merchant } from "../../db/models/index.js";
 
 export const updateFeedBack = async (req, res) => {
     const { rating, comment } = req.body
     const { invoiceId } = req.params
+    const consumerId = req.id
     try {
         const invoiceExist = await Invoice.findByPk(invoiceId)
         if (!invoiceExist) {
@@ -12,7 +13,7 @@ export const updateFeedBack = async (req, res) => {
                 success: false
             })
         }
-        await Feedback.update({ rating, comment }, { where: { invoiceId } })
+        await Feedback.update({ rating, comment, consumerId }, { where: { invoiceId } })
 
 
         return res.status(200).json({ message: 'Feedback updated successfully', success: true });
@@ -97,7 +98,7 @@ export const getAllFeedback = async (req, res) => {
             })
         }
         const feedbacks = await Feedback.findAll({
-            
+
             include: {
                 model: Invoice,
                 attributes: [],

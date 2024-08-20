@@ -10,17 +10,21 @@ export const Feedback = sequelize.define("feedback", {
     rating: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue:0
+        defaultValue: 0
     },
     comment: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue:""
+        defaultValue: ""
     },
     invoiceId: {
         type: DataTypes.STRING,
         allowNull: false,
-         }
+    },
+    consumerId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    }
 }, {
     timestamps: true
 })
