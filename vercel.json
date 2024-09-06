@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/app.js",
+      "use": "@vercel/node",
+      "config": { "includeFiles": ["dist/**"] }
+    }
+  ],
+  "rewrites": [{ "source": "/(.*)", "destination": "/api/v1" }]
+}
