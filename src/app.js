@@ -35,10 +35,16 @@ app.use("/uploads", express.static("uploads"));
 app.use("/public", express.static("public"));
 
 // CORS setup
-app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://billing-client-jade.vercel.app",
+    ],
+    credentials: true,
+  })
+);
 
 const filename = fileURLToPath(import.meta.url);
 const dir = dirname(filename);
