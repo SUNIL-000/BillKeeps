@@ -40,7 +40,10 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://billing-client-jade.vercel.app",
+      "https://billkeeps.com",
+      "https://merchant.billkeeps.com",
+      "https://consumer.billkeeps.com",
+      "https://www.billkeeps.com",
     ],
     credentials: true,
   })
