@@ -3,7 +3,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
-
+import path from 'path';
+import fs from 'fs';
 // Creating a new merchant account
 export const createNewMerchant = async (req, res) => {
   const { businessName, gstNo, contactNo, address, password, businessType } = req.body;
@@ -195,6 +196,60 @@ export const getAllMerchantID = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       message: "Error while getting all merchant IDs.",
+      success: false,
+      error,
+    });
+  }
+};
+
+//update merchant / buisness controller
+
+export const updateMerchant = async (req, res) => {
+  const { businessName, gstNo, contactNo, address, businessType } = req.body;
+  const { merchantId } = req.params;
+  const newBusinessLogo = req.file;
+
+  try {
+    const existingMerchant = await Merchant.findByPk(merchantId);
+
+    if (!existingMerchant) {
+      return res.status(404).json({
+        message: "Merchant not found",
+        success: false,
+      });
+    }
+
+    if (existingMerchant.businessLogoUrl && newBusinessLogo) {
+      fs.unlink(existingMerchant.businessLogoUrl, (err) => {
+        if (err) {
+          console.error("Error while removing old photo", err);
+        } else {
+          console.log("Old photo removed");
+        }
+      });
+    }
+    // Update merchant 
+    const updateFields = {};
+    if (businessName) updateFields.businessName = businessName;
+    if (gstNo) updateFields.gstNo = gstNo;
+    if (contactNo) updateFields.contactNo = contactNo;
+    if (address) updateFields.address = address;
+    if (businessType) updateFields.businessType = businessType;
+    if (newBusinessLogo) updateFields.businessLogoUrl = newBusinessLogo.path;
+
+
+    const updatedMerchant = await Merchant.update(updateFields, {
+      where: { merchantId }
+    });
+    return res.status(200).json({
+      message: "Merchant updated successfully.",
+      success: true,
+
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Error while updating merchant details.",
       success: false,
       error,
     });

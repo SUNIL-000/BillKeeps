@@ -17,3 +17,8 @@ const storage = multer.diskStorage({
 export const Imageupload = multer({ storage: storage }).single(
   "businessLogoUrl"
 );
+
+
+export const newImageupload = multer({ storage: storage }).single(
+  "newBusinessLogo"
+);

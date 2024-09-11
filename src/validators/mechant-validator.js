@@ -46,3 +46,34 @@ export const merchantTopProductValidation = z.object({
       .length(10, { message: "merchantId must be of 10 letters" }),
   })
 });
+
+
+export const merchantUpdateValidation = z.object({
+  body: z.object({
+    businessName: z
+      .string({ required_error: "buisnessName required" })
+      .min(1, { message: "buisnessName must be at least 1 character" })
+      .max(200, { message: "buisnessName must be at most 200 characters" }).optional(),
+    contactNo: z
+      .string({ required_error: "contactNo required" })
+      .length(10, { message: "contactNo must be exactly 10 digits" }).optional(),
+
+    gstNo: z.string().optional(),
+
+    address: z
+      .string()
+      .max(100, { message: "address must be at most 100 characters" })
+      .optional(),
+
+    businessType: z
+      .string()
+      .max(100, { message: "businessType must be at most 100 characters" })
+      .optional(),
+
+
+  }),
+  params: z.object({
+    merchantId: z.string({ required_error: "merchantId required" })
+      .length(10, { message: "merchantId must be of 10 letters" })
+  })
+});
