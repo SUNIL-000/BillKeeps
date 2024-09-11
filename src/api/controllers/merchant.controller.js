@@ -220,7 +220,7 @@ export const updateMerchant = async (req, res) => {
     }
 
     if (existingMerchant.businessLogoUrl && newBusinessLogo) {
-      fs.unlink(existingMerchant.businessLogoUrl, (err) => {
+      rm(existingMerchant?.businessLogoUrl, (err) => {
         if (err) {
           console.error("Error while removing old photo", err);
         } else {
