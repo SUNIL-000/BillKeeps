@@ -1,4 +1,4 @@
-import { Op } from "sequelize";
+import { and, Op, where } from "sequelize";
 import { Product, Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
 
@@ -16,20 +16,42 @@ export const NewProduct = async (req, res) => {
         success: false,
       });
     }
-
-    const productId = generateID("P");
-    const newProduct = await Product.create({
-      productId,
-      merchantId,
-      name,
-      desc,
-      mrp,
+    // const productId = generateID("P");
+    const existProduct = await Product.findOne({
+      where: {
+        [Op.and]: [
+          { name: name.trim() },
+          { merchantId },
+          { mrp }
+        ]
+      }
     });
+    //creation of new product
+    let newProduct;
+    if (existProduct) {
 
+      return res.status(400).json({
+        message: "Product with the same price is already present",
+        success: false,
+      });
+
+    }
+    else {
+
+      newProduct = await Product.create({
+        productId: generateID("P"),
+        merchantId,
+        name: name.trim(),
+        desc,
+        mrp,
+      });
+    }
+    console.log(newProduct)
     if (!newProduct) {
       return res.status(400).json({
         message: "Failed to create new product",
         success: false,
+
       });
     }
 
