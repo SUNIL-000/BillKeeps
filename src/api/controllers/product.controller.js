@@ -89,8 +89,26 @@ export const updateProduct = async (req, res) => {
         success: false,
       });
     }
+    const alreadyProduct = await Product.findOne({
+      where: {
+        [Op.and]: [
+          { name: name.trim() },
+          { merchantId },
+          { mrp }
+        ]
+      }
+    });
+    if (alreadyProduct) {
+      return res.status(400).json({
+        message: "Product with the same price is already present",
+        success: false,
+      });
 
-    existProduct.update({ name, mrp, desc })
+    }
+    else {
+
+      existProduct.update({ name:name.trim(), mrp, desc:desc.trim() })
+    }
 
 
     await existProduct.save();
