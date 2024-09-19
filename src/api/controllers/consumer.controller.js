@@ -186,3 +186,36 @@ export const getAllConsumer = async (req, res) => {
     });
   }
 };
+export const updatePasswordConsumer = async (req, res) => {
+  const consumerId = req.id
+  const { currentPassword, newPassword } = req.body;
+
+
+  try {
+    const isConsumer = await Consumer.findByPk(consumerId)
+    const ismatchPassword = bcrypt.compareSync(currentPassword, isConsumer.password);
+
+    if (!ismatchPassword) {
+      return res.status(400).json({
+        message: "Old password mismatch",
+        success: false,
+      });
+    }
+    else {
+
+      isConsumer.password = bcrypt.hashSync(newPassword, 10);
+      await isConsumer.save();
+    }
+
+    return res.status(200).json({
+      message: "New password updated successfully",
+      success: false
+    });
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      message: "Error while updating new password",
+      success: false,
+    });
+  }
+};
