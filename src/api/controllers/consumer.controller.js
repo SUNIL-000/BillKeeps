@@ -209,12 +209,12 @@ export const updatePasswordConsumer = async (req, res) => {
 
     return res.status(200).json({
       message: "New password updated successfully",
-      success: false
+      success: true
     });
   } catch (error) {
     console.log(error)
     return res.status(500).json({
-      message: "Error while updating new password",
+      message: "Error while updating new password of consumer",
       success: false,
     });
   }
