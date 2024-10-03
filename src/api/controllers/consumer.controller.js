@@ -219,3 +219,34 @@ export const updatePasswordConsumer = async (req, res) => {
     });
   }
 };
+
+export const searchNearByMerchant = async (req, res) => {
+  try {
+    const { pincode } = req.query
+
+    const nearByMerchant = await Merchant.findAndCountAll({
+      where: { pincode },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "password"],
+      },
+    })
+
+    if (nearByMerchant?.count == 0) {
+      return res.status(404).json({
+        message: "No near by merchant found",
+        success: true,
+      });
+    }
+    return res.status(200).json({
+      message: `Getting ${nearByMerchant?.count} near by merchant `,
+      success: true,
+      merchants: nearByMerchant?.rows
+    });
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      message: "Error while searhing near by merchant",
+      success: false,
+    });
+  }
+}

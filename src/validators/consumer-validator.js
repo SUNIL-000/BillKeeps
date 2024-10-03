@@ -42,3 +42,10 @@ export const updatePassword = z.object({
   }),
 
 });
+export const NearbyMerchant = z.object({
+  query: z.object({
+    pincode: z.string({ required_error: "currentPassword required" })
+      .regex(/^[0-9]{6}$/, { message: "Pincode must be a 6-digit number" })
+  }),
+
+});

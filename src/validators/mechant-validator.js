@@ -23,7 +23,12 @@ export const merchantSignupValidation = z.object({
       .string()
       .max(100, { message: "businessType must be at most 100 characters" })
       .optional(),
-
+    pincode: z
+      .union([
+        z.string().regex(/^[0-9]{6}$/, { message: "Pincode must be a 6-digit number" }),
+        z.string().length(0),
+      ])
+      .optional()
 
   })
 
@@ -62,15 +67,19 @@ export const merchantUpdateValidation = z.object({
 
     address: z
       .string()
-      .max(100, { message: "address must be at most 100 characters" })
+      .max(100, { message: "address must be atmost 100 characters" })
       .optional(),
 
     businessType: z
       .string()
-      .max(100, { message: "businessType must be at most 100 characters" })
+      .max(100, { message: "businessType must be atmost 100 characters" })
       .optional(),
-
-
+    pincode: z
+      .union([
+        z.string().regex(/^[0-9]{6}$/, { message: "pinode must be a 6-digit number" }),
+        z.string().length(0)
+      ])
+      .optional()
   }),
   params: z.object({
     merchantId: z.string({ required_error: "merchantId required" })

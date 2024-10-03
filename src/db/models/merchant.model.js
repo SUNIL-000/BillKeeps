@@ -9,7 +9,6 @@ export const Merchant = sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
-
     businessName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -26,12 +25,16 @@ export const Merchant = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    pincode: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     contactNo: {
       type: DataTypes.BIGINT,
       allowNull: false,
-      unique:true
+      unique: true
     },
-    businessType :{
+    businessType: {
       type: DataTypes.STRING,
       allowNull: true,
     },

@@ -9,7 +9,6 @@ const item = z.object({
 
     discountAmount: z.number()
         .gte(0, { message: "discountAmount must be greater than 0" })
-
         .optional(),
 
     discountPercent: z.number()
@@ -43,9 +42,7 @@ export const invoiceValidation = z.object({
 export const singleInvoiceValidation = z.object({
     params: z.object({
         invoiceId: z.string({ required_error: "invoiceId required" })
-            .length(10, { message: "invoiceId must be of 10 letters" }),
-
-
+            .length(10, { message: "invoiceId must be of 10 letters" }), 
     })
 
 });

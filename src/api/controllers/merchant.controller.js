@@ -3,11 +3,10 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
-import path from 'path';
-import fs from 'fs';
+
 // Creating a new merchant account
 export const createNewMerchant = async (req, res) => {
-  const { businessName, gstNo, contactNo, address, password, businessType } = req.body;
+  const { businessName, gstNo, contactNo, address, password, businessType, pincode } = req.body;
   const businessLogoUrl = req.file;
 
   // Generate merchantId using UUID
@@ -42,6 +41,7 @@ export const createNewMerchant = async (req, res) => {
       businessType,
       password: hashedPassword,
       contactNo,
+      pincode
     });
     await newMerchant.save();
 
@@ -205,7 +205,7 @@ export const getAllMerchantID = async (req, res) => {
 //update merchant / buisness controller
 
 export const updateMerchant = async (req, res) => {
-  const { businessName, gstNo, contactNo, address, businessType } = req.body;
+  const { businessName, gstNo, contactNo, address, businessType ,pincode} = req.body;
   const { merchantId } = req.params;
   const newBusinessLogo = req.file;
 
@@ -235,6 +235,7 @@ export const updateMerchant = async (req, res) => {
     if (contactNo) updateFields.contactNo = contactNo;
     if (address) updateFields.address = address;
     if (businessType) updateFields.businessType = businessType;
+    if (pincode) updateFields.pincode = pincode;
     if (newBusinessLogo) updateFields.businessLogoUrl = newBusinessLogo.path;
 
 

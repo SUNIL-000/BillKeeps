@@ -34,7 +34,7 @@ Otp.belongsTo(Consumer, { foreignKey: "consumerId" });
 Invoice.hasOne(Feedback, { foreignKey: "invoiceId" });
 Feedback.belongsTo(Invoice, { foreignKey: "invoiceId" });
 
-await sequelize.sync({ alter: true });
+await sequelize.sync({});
 console.log("Tables are created successfully");
 
 export { Merchant, Product, Consumer, Invoice, InvoiceItem, Otp, Feedback };
