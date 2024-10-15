@@ -28,6 +28,7 @@ export const Merchant = sequelize.define(
     pincode: {
       type: DataTypes.INTEGER,
       allowNull: true,
+     
     },
     contactNo: {
       type: DataTypes.BIGINT,

@@ -2,8 +2,7 @@ import { z } from "zod";
 
 export const merchantSignupValidation = z.object({
   body: z.object({
-    businessName: z
-      .string({ required_error: "buisnessName required" })
+    businessName: z.string({ required_error: "buisnessName required" })
       .min(1, { message: "buisnessName must be at least 1 character" })
       .max(200, { message: "buisnessName must be at most 200 characters" }),
     contactNo: z
@@ -23,12 +22,13 @@ export const merchantSignupValidation = z.object({
       .string()
       .max(100, { message: "businessType must be at most 100 characters" })
       .optional(),
-    pincode: z
-      .union([
-        z.string().regex(/^[0-9]{6}$/, { message: "Pincode must be a 6-digit number" }),
-        z.string().length(0),
-      ])
+    pincode: z.union([
+      z.string().regex(/^[0-9]{6}$/, { message: "Pincode must be a 6-digit number" }),
+      z.string().length(0),
+    ])
       .optional()
+      .transform((pincode) => (pincode === '' ? null : pincode))
+
 
   })
 
