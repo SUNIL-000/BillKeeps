@@ -8,7 +8,7 @@ import { generateID } from "../../utils/generateID.js";
 export const createNewMerchant = async (req, res) => {
   const { businessName, gstNo, contactNo, address, password, businessType, pincode } = req.body;
   const businessLogoUrl = req.file;
-
+  console.log(req.body)
   // Generate merchantId using UUID
   let merchantId = generateID("M");
 
