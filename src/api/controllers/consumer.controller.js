@@ -7,7 +7,7 @@ export const createNewConsumer = async (req, res) => {
   const { password, contactNo } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
 
-  //from UUID we just create consumerId
+  //from UUID we just create consumerId...
   let consumerId = generateID("C");
   try {
     //check for existing consumer
