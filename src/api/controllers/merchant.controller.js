@@ -6,9 +6,18 @@ import { generateID } from "../../utils/generateID.js";
 
 // Creating a new merchant account
 export const createNewMerchant = async (req, res) => {
-  const { businessName, gstNo, contactNo, address, password, businessType, pincode } = req.body;
+  const {
+    businessName,
+    gstNo,
+    contactNo,
+    address,
+    password,
+    businessType,
+    pincode,
+  
+  } = req.body;
   const businessLogoUrl = req.file;
-  console.log(req.body)
+  console.log(req.body);
   // Generate merchantId using UUID
   let merchantId = generateID("M");
 
@@ -41,7 +50,8 @@ export const createNewMerchant = async (req, res) => {
       businessType,
       password: hashedPassword,
       contactNo,
-      pincode
+      pincode,
+      
     });
     await newMerchant.save();
 
@@ -205,7 +215,15 @@ export const getAllMerchantID = async (req, res) => {
 //update merchant / buisness controller
 
 export const updateMerchant = async (req, res) => {
-  const { businessName, gstNo, contactNo, address, businessType ,pincode} = req.body;
+  const {
+    businessName,
+    gstNo,
+    contactNo,
+    address,
+    businessType,
+    pincode,
+    tandc,
+  } = req.body;
   const { merchantId } = req.params;
   const newBusinessLogo = req.file;
 
@@ -228,7 +246,7 @@ export const updateMerchant = async (req, res) => {
         }
       });
     }
-    // Update merchant 
+    // Update merchant
     const updateFields = {};
     if (businessName) updateFields.businessName = businessName;
     if (gstNo) updateFields.gstNo = gstNo;
@@ -237,15 +255,14 @@ export const updateMerchant = async (req, res) => {
     if (businessType) updateFields.businessType = businessType;
     if (pincode) updateFields.pincode = pincode;
     if (newBusinessLogo) updateFields.businessLogoUrl = newBusinessLogo.path;
-
+    if (tandc) updateFields.tandc = tandc;
 
     const updatedMerchant = await Merchant.update(updateFields, {
-      where: { merchantId }
+      where: { merchantId },
     });
     return res.status(200).json({
       message: "Merchant updated successfully.",
       success: true,
-
     });
   } catch (error) {
     console.log(error);

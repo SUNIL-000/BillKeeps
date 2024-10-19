@@ -28,12 +28,11 @@ export const Merchant = sequelize.define(
     pincode: {
       type: DataTypes.INTEGER,
       allowNull: true,
-     
     },
     contactNo: {
       type: DataTypes.BIGINT,
       allowNull: false,
-      unique: true
+      unique: true,
     },
     businessType: {
       type: DataTypes.STRING,
@@ -41,7 +40,12 @@ export const Merchant = sequelize.define(
     },
     password: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    tandc: {
+      type: DataTypes.STRING,
       allowNull: true,
+      defaultValue: "Terms and condition test"
     },
   },
   { timestamps: true }

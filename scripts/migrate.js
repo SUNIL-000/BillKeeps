@@ -5,7 +5,7 @@ const args = process.argv;
 
 if (args[2]) {
   if (args[2] == "-f") {
-    sequelize.sync({ force: true });
+    sequelize.sync({ alter: true });
   }
 } else {
   sequelize.sync();
