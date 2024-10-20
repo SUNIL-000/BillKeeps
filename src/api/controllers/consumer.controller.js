@@ -1,6 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { Consumer, Invoice, Merchant } from "../../db/models/index.js";
+import {
+  Consumer,
+  Feedback,
+  Invoice,
+  Merchant,
+} from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
 
 export const createNewConsumer = async (req, res) => {
@@ -130,7 +135,7 @@ export const consumerDetails = async (req, res) => {
 };
 //no of consumers
 export const totalConsumer = async (req, res) => {
-  const { merchantId } = req.params
+  const { merchantId } = req.params;
   try {
     const ismerchant = await Merchant.findByPk(merchantId);
 
@@ -138,13 +143,12 @@ export const totalConsumer = async (req, res) => {
       return res.status(400).json({
         message: "Wrong merchantId",
         success: false,
-
       });
     }
     const totalConsumer = await Invoice.count({
       where: { merchantId },
       distinct: true,
-      col: 'consumerId'
+      col: "consumerId",
     });
 
     return res.status(200).json({
@@ -187,32 +191,32 @@ export const getAllConsumer = async (req, res) => {
   }
 };
 export const updatePasswordConsumer = async (req, res) => {
-  const consumerId = req.id
+  const consumerId = req.id;
   const { currentPassword, newPassword } = req.body;
 
-
   try {
-    const isConsumer = await Consumer.findByPk(consumerId)
-    const ismatchPassword = bcrypt.compareSync(currentPassword, isConsumer.password);
+    const isConsumer = await Consumer.findByPk(consumerId);
+    const ismatchPassword = bcrypt.compareSync(
+      currentPassword,
+      isConsumer.password
+    );
 
     if (!ismatchPassword) {
       return res.status(400).json({
         message: "Old password mismatch",
         success: false,
       });
-    }
-    else {
-
+    } else {
       isConsumer.password = bcrypt.hashSync(newPassword, 10);
       await isConsumer.save();
     }
 
     return res.status(200).json({
       message: "New password updated successfully",
-      success: true
+      success: true,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({
       message: "Error while updating new password of consumer",
       success: false,
@@ -220,33 +224,60 @@ export const updatePasswordConsumer = async (req, res) => {
   }
 };
 
-export const searchNearByMerchant = async (req, res) => {
+export const searchNearByMerchantWithAvgRating = async (req, res) => {
   try {
-    const { pincode } = req.query
+    const { pincode } = req.query;
 
-    const nearByMerchant = await Merchant.findAndCountAll({
+
+    const nearByMerchants = await Merchant.findAll({
       where: { pincode },
       attributes: {
         exclude: ["createdAt", "updatedAt", "password"],
       },
-    })
+    });
 
-    if (nearByMerchant?.count == 0) {
+    if (nearByMerchants.length === 0) {
       return res.status(404).json({
-        message: "No near by merchant found",
-        success: true,
+        message: "No nearby merchants found",
+        success: false,
       });
     }
+
+    const merchantsWithRatings = [];
+
+    for (const merchant of nearByMerchants) {
+
+      const feedbacks = await Feedback.findAll({
+        include: {
+          model: Invoice,
+          where: { merchantId: merchant.merchantId }, 
+          attributes: [],
+        },
+        attributes: ["rating"],
+      });
+
+ 
+      const ratings = feedbacks.map(item => item.rating);
+      const avgRating = ratings.length > 0 
+        ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length 
+        : 0;
+
+      merchantsWithRatings.push({
+        ...merchant.get(), 
+        avgRating,
+      });
+    }
+
     return res.status(200).json({
-      message: `Getting ${nearByMerchant?.count} near by merchant `,
+      message: `Found ${nearByMerchants.length} nearby merchants`,
       success: true,
-      merchants: nearByMerchant?.rows
+      merchants: merchantsWithRatings,
     });
   } catch (error) {
-    console.log(error)
+    console.error(error);
     return res.status(500).json({
-      message: "Error while searhing near by merchant",
+      message: "Error while searching for nearby merchants",
       success: false,
     });
   }
-}
+};
