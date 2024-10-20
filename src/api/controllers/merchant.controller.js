@@ -14,7 +14,6 @@ export const createNewMerchant = async (req, res) => {
     password,
     businessType,
     pincode,
-  
   } = req.body;
   const businessLogoUrl = req.file;
   console.log(req.body);
@@ -51,7 +50,6 @@ export const createNewMerchant = async (req, res) => {
       password: hashedPassword,
       contactNo,
       pincode,
-      
     });
     await newMerchant.save();
 
@@ -229,10 +227,19 @@ export const updateMerchant = async (req, res) => {
 
   try {
     const existingMerchant = await Merchant.findByPk(merchantId);
+    const existingContactNo = await Merchant.findOne({
+      where: { contactNo: contactNo },
+    });
 
     if (!existingMerchant) {
       return res.status(404).json({
         message: "Merchant not found",
+        success: false,
+      });
+    } 
+    if (!existingContactNo) {
+      return res.status(400).json({
+        message: "This number has been already used ",
         success: false,
       });
     }
