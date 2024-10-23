@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
+import { config } from "../../config/env.js";
 
 // Creating a new merchant account
 export const createNewMerchant = async (req, res) => {
@@ -50,6 +51,7 @@ export const createNewMerchant = async (req, res) => {
       password: hashedPassword,
       contactNo,
       pincode,
+      tandc: config.tandc,
     });
     await newMerchant.save();
 
@@ -236,7 +238,7 @@ export const updateMerchant = async (req, res) => {
         message: "Merchant not found",
         success: false,
       });
-    } 
+    }
     if (!existingContactNo) {
       return res.status(400).json({
         message: "This number has been already used ",

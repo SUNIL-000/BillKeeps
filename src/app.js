@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import morgan from "morgan";
-import dotenv from "dotenv";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import { merchantRoutes } from "./api/routes/merchant.route.js";
@@ -15,9 +14,6 @@ import { otpRouter } from "./api/routes/otp.route.js";
 import { config } from "./config/env.js";
 import { feedbackroutes } from "./api/routes/feedback.route.js";
 
-dotenv.config({
-  path: ".env",
-});
 
 const app = express();
 
@@ -54,7 +50,7 @@ const dir = dirname(filename);
 app.set("views", path.join(dir, "views"));
 
 // API base point
-app.get("/", (req, res) => res.send("API base point"));
+// app.get("/", (req, res) => res.send("API base point"));
 app.get("/api/v1", (req, res) => res.send("API v1 base point"));
 
 app.use("/api/v1/merchant", merchantRoutes);
@@ -64,6 +60,7 @@ app.use("/api/v1/invoice", invoiceRouter);
 app.use("/api/v1/invoice-item", invoiceItem);
 app.use("/api/v1/otp", otpRouter);
 app.use("/api/v1/feedback", feedbackroutes);
+
 
 // Connect to the server and database
 app.listen(config?.server?.port, async () => {

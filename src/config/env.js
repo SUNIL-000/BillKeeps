@@ -1,5 +1,7 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import dotenv from "dotenv";
+dotenv.config({
+  path:".env"
+});
 
 export const config = {
   db: {
@@ -15,4 +17,5 @@ export const config = {
   bcrypt: {
     salt: process.env.BCRYPT_SALT,
   },
+  tandc: process.env.TANDC,
 };

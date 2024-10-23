@@ -45,7 +45,6 @@ export const Merchant = sequelize.define(
     tandc: {
       type: DataTypes.STRING,
       allowNull: true,
-      defaultValue: "Terms and condition test"
     },
   },
   { timestamps: true }

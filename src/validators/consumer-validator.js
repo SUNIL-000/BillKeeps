@@ -42,10 +42,18 @@ export const updatePassword = z.object({
   }),
 
 });
-export const NearbyMerchant = z.object({
-  query: z.object({
-    pincode: z.string({ required_error: "currentPassword required" })
-      .regex(/^[0-9]{6}$/, { message: "Pincode must be a 6-digit number" })
-  }),
+// export const NearbyMerchant = z.object({
+//   body: z.object({
+//     pincode: z.string({ required_error: "Pincode required" })
+//       .regex(/^[0-9]{6}$/, { message: "Pincode must be a 6-digit number" })
+//       .optional(),
 
-});
+//       lat: z.string({ required_error: "lattitude required" })
+//       .optional(),
+
+//       lon: z.string({ required_error: "Longitude required" })
+//       .optional(),
+      
+//   }),
+
+// });

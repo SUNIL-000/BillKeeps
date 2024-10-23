@@ -7,6 +7,7 @@ import {
   Merchant,
 } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
+import { getPinCode } from "./location.controller.js";
 
 export const createNewConsumer = async (req, res) => {
   const { password, contactNo } = req.body;
@@ -224,13 +225,25 @@ export const updatePasswordConsumer = async (req, res) => {
   }
 };
 
-export const searchNearByMerchantWithAvgRating = async (req, res) => {
+export const searchMerchantByPincode = async (req, res) => {
   try {
-    const { pincode } = req.query;
+    const { pincode, lat, lon } = req.body;
 
+    let searchPincode = pincode;
+
+    if (!pincode && lat && lon) {
+      searchPincode = await getPinCode(lat, lon);
+    }
+
+    if (!searchPincode) {
+      return res.status(400).json({
+        message: "Pincode or coordinates are required",
+        success: false,
+      });
+    }
 
     const nearByMerchants = await Merchant.findAll({
-      where: { pincode },
+      where: { pincode: searchPincode },
       attributes: {
         exclude: ["createdAt", "updatedAt", "password"],
       },
@@ -244,26 +257,24 @@ export const searchNearByMerchantWithAvgRating = async (req, res) => {
     }
 
     const merchantsWithRatings = [];
-
     for (const merchant of nearByMerchants) {
-
       const feedbacks = await Feedback.findAll({
         include: {
           model: Invoice,
-          where: { merchantId: merchant.merchantId }, 
+          where: { merchantId: merchant.merchantId },
           attributes: [],
         },
         attributes: ["rating"],
       });
 
- 
-      const ratings = feedbacks.map(item => item.rating);
-      const avgRating = ratings.length > 0 
-        ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length 
-        : 0;
+      const ratings = feedbacks.map((item) => item.rating);
+      const avgRating =
+        ratings.length > 0
+          ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
+          : 0;
 
       merchantsWithRatings.push({
-        ...merchant.get(), 
+        ...merchant.get(),
         avgRating,
       });
     }
