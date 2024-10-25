@@ -34,6 +34,6 @@ consumerRouter.put(
   bodyValidator(updatePassword),
   updatePasswordConsumer
 );
-consumerRouter.get("/search-by-pincode", isConsumer, searchMerchantByPincode);
+consumerRouter.post("/search-by-pincode", isConsumer, searchMerchantByPincode);
 
 consumerRouter.get("/all", getAllConsumer);
