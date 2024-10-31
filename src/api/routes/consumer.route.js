@@ -28,6 +28,7 @@ consumerRouter.post(
   consumerLogin
 );
 consumerRouter.get("/details", isConsumer, consumerDetails);
+
 consumerRouter.put(
   "/updatepassword",
   isConsumer,

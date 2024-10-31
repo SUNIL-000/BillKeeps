@@ -8,6 +8,7 @@ import {
 } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
 import { getPinCode } from "./location.controller.js";
+import { config } from "../../config/env.js";
 
 export const createNewConsumer = async (req, res) => {
   const { password, contactNo } = req.body;
@@ -34,10 +35,8 @@ export const createNewConsumer = async (req, res) => {
     await newConsumer.save();
     const token = jwt.sign(
       { id: newConsumer?.consumerId, role: "consumer" },
-      process.env.JWT_SECRET_KEY,
-      {
-        expiresIn: "2d",
-      }
+      config.jwt.jwtSecret,
+      { expiresIn: config.jwt.jwtAccessTokenExpiry }
     );
 
     if (!newConsumer) {
@@ -80,10 +79,9 @@ export const consumerLogin = async (req, res) => {
 
     const token = jwt.sign(
       { id: consumer.consumerId, role: "consumer" },
-      process.env.JWT_SECRET_KEY,
-      {
-        expiresIn: "2d",
-      }
+      config.jwt.jwtSecret,
+      { expiresIn: config.jwt.jwtAccessTokenExpiry }
+      
     );
     let isMatch = bcrypt.compareSync(password, consumer?.password);
     if (!isMatch) {

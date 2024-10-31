@@ -57,8 +57,8 @@ export const createNewMerchant = async (req, res) => {
 
     const token = jwt.sign(
       { id: newMerchant.merchantId, role: "merchant" },
-      process.env.JWT_SECRET_KEY,
-      { expiresIn: "2d" }
+      config.jwt.jwtSecret,
+      { expiresIn: config.jwt.jwtAccessTokenExpiry }
     );
 
     if (!newMerchant) {
@@ -166,8 +166,8 @@ export const merchantLogin = async (req, res) => {
 
     const token = jwt.sign(
       { id: merchant.merchantId, role: "merchant" },
-      process.env.JWT_SECRET_KEY,
-      { expiresIn: "2d" }
+      config.jwt?.jwtSecret,
+      { expiresIn: config.jwt?.jwtAccessTokenExpiry }
     );
 
     return res.status(200).json({
