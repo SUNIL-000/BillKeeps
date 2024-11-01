@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config({
-  path:".env"
+  path: ".env"
 });
 
 export const config = {
@@ -18,4 +18,9 @@ export const config = {
     salt: process.env.BCRYPT_SALT,
   },
   tandc: process.env.TANDC,
+  webHooks: {
+    merchantsHookUrl: process.env.MERCHANT_HOOKS_URL,
+    consumerHookUrl: process.env.CONSUMER_HOOKS_URL,
+
+  }
 };

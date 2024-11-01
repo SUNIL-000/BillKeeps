@@ -9,6 +9,7 @@ import {
 import { generateID } from "../../utils/generateID.js";
 import { getPinCode } from "./location.controller.js";
 import { config } from "../../config/env.js";
+import axios from "axios";
 
 export const createNewConsumer = async (req, res) => {
   const { password, contactNo } = req.body;
@@ -32,6 +33,19 @@ export const createNewConsumer = async (req, res) => {
       password: hashedPassword,
       contactNo,
     });
+
+    try {
+
+      const result = await axios.post(config?.webHooks?.consumerHookUrl, {
+        consumerId: newConsumer.consumerId,
+        contactNo: newConsumer.contactNo,
+        
+      });
+      console.log(result.data, "Webhook called successfully.(consumer)");
+    } catch (webhookError) {
+      console.error("Error calling webhook:", webhookError.message);
+      // Handle the error, e.g., retry logic or log for future debugging
+    }
     await newConsumer.save();
     const token = jwt.sign(
       { id: newConsumer?.consumerId, role: "consumer" },
@@ -81,7 +95,7 @@ export const consumerLogin = async (req, res) => {
       { id: consumer.consumerId, role: "consumer" },
       config.jwt.jwtSecret,
       { expiresIn: config.jwt.jwtAccessTokenExpiry }
-      
+
     );
     let isMatch = bcrypt.compareSync(password, consumer?.password);
     if (!isMatch) {

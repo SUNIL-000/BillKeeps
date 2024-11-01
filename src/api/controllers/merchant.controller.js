@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { Merchant } from "../../db/models/index.js";
 import { generateID } from "../../utils/generateID.js";
 import { config } from "../../config/env.js";
+import axios from "axios";
 
 // Creating a new merchant account
 export const createNewMerchant = async (req, res) => {
@@ -17,7 +18,7 @@ export const createNewMerchant = async (req, res) => {
     pincode,
   } = req.body;
   const businessLogoUrl = req.file;
-  console.log(req.body);
+  // console.log(req.body);
   // Generate merchantId using UUID
   let merchantId = generateID("M");
 
@@ -53,6 +54,29 @@ export const createNewMerchant = async (req, res) => {
       pincode,
       tandc: config.tandc,
     });
+
+
+    //calling web hooks
+    try {
+
+      const result = await axios.post(config?.webHooks?.merchantsHookUrl, {
+        merchantId: newMerchant.merchantId,
+        businessName: newMerchant.businessName,
+        contactNo: newMerchant.contactNo,
+        gstNo: newMerchant.gstNo,
+        address: newMerchant.address,
+        pincode: newMerchant.pincode,
+        businessType: newMerchant.businessType,
+        tandc: newMerchant.tandc,
+
+      });
+      console.log(result?.data, "Webhook called successfully.(Merchant)");
+    } catch (webhookError) {
+      console.error("Error calling webhook:", webhookError.message);
+      // Handle the error, e.g., retry logic or log for future debugging
+    }
+
+
     await newMerchant.save();
 
     const token = jwt.sign(
